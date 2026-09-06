@@ -6,14 +6,22 @@ import {
   TileLayer,
   Marker,
   Popup,
+  Polyline,
+  Polygon,
+  CircleMarker,
   useMap,
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
 import type { AffiliationColor, PlacedSymbol } from "@/types/symbol";
+import type { PlacedLine } from "@/types/line";
 import { getSymbol } from "@/lib/symbols";
+import { getLineType } from "@/lib/lineTypes";
+import { AFFILIATION_HEX } from "@/lib/colors";
 import { renderSymbolSvg } from "@/lib/renderSymbol";
 import SymbolPopupContent from "@/components/SymbolPopupContent";
+import LinePopupContent from "@/components/LinePopupContent";
+import type { LineDrawChoice } from "@/components/LineDrawPanel";
 
 export const DEFAULT_CENTER: [number, number] = [47.79185, 91.78977];
 export const DEFAULT_ZOOM = 16;
@@ -80,19 +88,26 @@ function DropHandler({
 }
 
 /** Lets a symbol picked in the palette (tap/click) be placed on the next
- * map click — a touch- and accessibility-friendly alternative to drag/drop. */
+ * map click, and — when a line/area type is being drawn instead — adds
+ * each click as the next vertex of the shape being drawn. */
 function ClickToPlaceHandler({
   pendingSymbolId,
+  drawChoice,
   onPlace,
+  onAddPoint,
   onDeselect,
 }: {
   pendingSymbolId: string | null;
+  drawChoice: LineDrawChoice | null;
   onPlace: (symbolId: string, lat: number, lng: number) => void;
+  onAddPoint: (lat: number, lng: number) => void;
   onDeselect: () => void;
 }) {
   useMapEvents({
     click(e) {
-      if (pendingSymbolId) {
+      if (drawChoice) {
+        onAddPoint(e.latlng.lat, e.latlng.lng);
+      } else if (pendingSymbolId) {
         onPlace(pendingSymbolId, e.latlng.lat, e.latlng.lng);
       } else {
         onDeselect();
@@ -104,35 +119,83 @@ function ClickToPlaceHandler({
 
 export default function MapCanvas({
   placements,
+  lines,
   pendingSymbolId = null,
+  drawChoice = null,
+  finishRequestId = 0,
   onDropSymbol,
   onMoveSymbol,
   onDeleteSymbol,
   onUpdateDesignation,
   onUpdateAffiliation,
   onUpdateBranch,
+  onFinishLine,
+  onCancelDraw,
+  onDeleteLine,
+  onUpdateLineAffiliation,
 }: {
   placements: PlacedSymbol[];
+  lines: PlacedLine[];
   pendingSymbolId?: string | null;
+  drawChoice?: LineDrawChoice | null;
+  finishRequestId?: number;
   onDropSymbol: (symbolId: string, lat: number, lng: number) => void;
   onMoveSymbol: (uid: string, lat: number, lng: number) => void;
   onDeleteSymbol: (uid: string) => void;
   onUpdateDesignation: (uid: string, designation: string) => void;
   onUpdateAffiliation: (uid: string, affiliation: AffiliationColor) => void;
   onUpdateBranch: (uid: string, branchGlyphId: string | undefined) => void;
+  onFinishLine: (points: [number, number][]) => void;
+  onCancelDraw: () => void;
+  onDeleteLine: (uid: string) => void;
+  onUpdateLineAffiliation: (uid: string, affiliation: AffiliationColor) => void;
 }) {
   const markerRefs = useRef<Record<string, L.Marker>>({});
   const hoverTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
     {},
   );
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
+  const [selectedLineUid, setSelectedLineUid] = useState<string | null>(null);
+  const [draftPoints, setDraftPoints] = useState<[number, number][]>([]);
+  const [draftForChoice, setDraftForChoice] = useState<LineDrawChoice | null>(
+    null,
+  );
 
-  // Lets a selected symbol be removed with the Delete/Backspace key, since
-  // opening its popup and clicking "Устгах" is fiddly right after dragging.
+  // "Adjusting state during render" instead of setState-in-an-effect: reset
+  // the in-progress draft whenever draw mode is turned off/changed.
+  if (drawChoice !== draftForChoice) {
+    setDraftForChoice(drawChoice);
+    setDraftPoints([]);
+  }
+
+  const minPoints = drawChoice
+    ? getLineType(drawChoice.typeId)?.kind === "area"
+      ? 3
+      : 2
+    : 0;
+
+  const finishDraft = useCallback(() => {
+    if (draftPoints.length < minPoints) return;
+    onFinishLine(draftPoints);
+    setDraftPoints([]);
+  }, [draftPoints, minPoints, onFinishLine]);
+
+  // "Дуусгах" button in MapShell lives outside this component (draftPoints
+  // is local state here), so it signals us via an incrementing id instead.
+  const isFirstFinishSignal = useRef(true);
+  useEffect(() => {
+    if (isFirstFinishSignal.current) {
+      isFirstFinishSignal.current = false;
+      return;
+    }
+    finishDraft();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [finishRequestId]);
+
+  // Lets a selected symbol/line be removed with Delete/Backspace, and an
+  // in-progress line draft be cancelled (Esc) or finished (Enter).
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
-      if (!selectedUid) return;
-      if (e.key !== "Delete" && e.key !== "Backspace") return;
       const target = e.target as HTMLElement | null;
       const isEditingText =
         target &&
@@ -140,13 +203,39 @@ export default function MapCanvas({
           target.tagName === "TEXTAREA" ||
           target.isContentEditable);
       if (isEditingText) return;
-      e.preventDefault();
-      onDeleteSymbol(selectedUid);
-      setSelectedUid(null);
+
+      if (drawChoice) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          onCancelDraw();
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          finishDraft();
+        }
+        return;
+      }
+      if (e.key !== "Delete" && e.key !== "Backspace") return;
+      if (selectedUid) {
+        e.preventDefault();
+        onDeleteSymbol(selectedUid);
+        setSelectedUid(null);
+      } else if (selectedLineUid) {
+        e.preventDefault();
+        onDeleteLine(selectedLineUid);
+        setSelectedLineUid(null);
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [selectedUid, onDeleteSymbol]);
+  }, [
+    selectedUid,
+    selectedLineUid,
+    onDeleteSymbol,
+    onDeleteLine,
+    drawChoice,
+    onCancelDraw,
+    finishDraft,
+  ]);
 
   const handleMouseOver = useCallback((uid: string) => {
     clearTimeout(hoverTimers.current[uid]);
@@ -171,7 +260,7 @@ export default function MapCanvas({
     <MapContainer
       center={DEFAULT_CENTER}
       zoom={DEFAULT_ZOOM}
-      className={`h-full w-full ${pendingSymbolId ? "cursor-crosshair" : ""}`}
+      className={`h-full w-full ${pendingSymbolId || drawChoice ? "cursor-crosshair" : ""}`}
       preferCanvas
     >
       <TileLayer
@@ -183,8 +272,15 @@ export default function MapCanvas({
       <DropHandler onDropSymbol={onDropSymbol} />
       <ClickToPlaceHandler
         pendingSymbolId={pendingSymbolId}
+        drawChoice={drawChoice}
         onPlace={onDropSymbol}
-        onDeselect={() => setSelectedUid(null)}
+        onAddPoint={(lat, lng) =>
+          setDraftPoints((prev) => [...prev, [lat, lng]])
+        }
+        onDeselect={() => {
+          setSelectedUid(null);
+          setSelectedLineUid(null);
+        }}
       />
 
       {placements.map((p) => {
@@ -235,6 +331,68 @@ export default function MapCanvas({
           </Marker>
         );
       })}
+
+      {lines.map((l) => {
+        const type = getLineType(l.typeId);
+        if (!type) return null;
+        const color = AFFILIATION_HEX[l.affiliation ?? "friendly"];
+        const selected = l.uid === selectedLineUid;
+        const pathOptions = {
+          color,
+          weight: selected ? 4 : 3,
+          dashArray: type.dashed ? "7 5" : undefined,
+          fillOpacity: type.kind === "area" ? 0.12 : 0,
+        };
+        const eventHandlers = { click: () => setSelectedLineUid(l.uid) };
+        const popup = (
+          <Popup autoPan={false} closeButton>
+            <LinePopupContent
+              type={type}
+              line={l}
+              onAffiliationChange={(color) =>
+                onUpdateLineAffiliation(l.uid, color)
+              }
+              onDelete={() => onDeleteLine(l.uid)}
+            />
+          </Popup>
+        );
+        return type.kind === "area" ? (
+          <Polygon
+            key={l.uid}
+            positions={l.points}
+            pathOptions={pathOptions}
+            eventHandlers={eventHandlers}
+          >
+            {popup}
+          </Polygon>
+        ) : (
+          <Polyline
+            key={l.uid}
+            positions={l.points}
+            pathOptions={pathOptions}
+            eventHandlers={eventHandlers}
+          >
+            {popup}
+          </Polyline>
+        );
+      })}
+
+      {drawChoice && draftPoints.length > 0 && (
+        <>
+          <Polyline
+            positions={draftPoints}
+            pathOptions={{ color: "#38bdf8", weight: 2, dashArray: "4 4" }}
+          />
+          {draftPoints.map((pt, i) => (
+            <CircleMarker
+              key={i}
+              center={pt}
+              radius={4}
+              pathOptions={{ color: "#38bdf8", fillOpacity: 1 }}
+            />
+          ))}
+        </>
+      )}
     </MapContainer>
   );
 }

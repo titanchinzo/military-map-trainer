@@ -81,6 +81,9 @@ export interface SymbolDef {
    * this per-instance. Raw SVG, same coordinate space as `glyph`.
    */
   centerGlyph?: string;
+  /** True for unit/subunit boxes whose embedded branch icon (`centerGlyph`)
+   * the trainee can swap per placement — see SymbolPopupContent. */
+  branchSelectable?: boolean;
 }
 
 /** A symbol instance the trainee has dropped onto the map. */

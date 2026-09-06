@@ -175,6 +175,7 @@ export const SYMBOLS: SymbolDef[] = [
     desc: "Төрөл мэргэжлийн буюу суурилсан зэвсэглэл, цэргийн техникийн таних тэмдгээр ялгана. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.2",
     centerGlyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/><line x1="20" y1="10" x2="20" y2="22"/>`,
+    branchSelectable: true,
   },
   {
     id: "horoo",
@@ -187,6 +188,7 @@ export const SYMBOLS: SymbolDef[] = [
     desc: "Хорооны шатлалын тэмдэг III, тэгш өнцөгт хүрээ. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.2",
     centerGlyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/>`,
+    branchSelectable: true,
   },
   {
     id: "batalion",
@@ -199,6 +201,7 @@ export const SYMBOLS: SymbolDef[] = [
     desc: "Батальоны шатлалын тэмдэг II, тэгш өнцөгт хүрээ. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.2",
     centerGlyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/>`,
+    branchSelectable: true,
   },
   {
     id: "batalionAuto",
@@ -211,6 +214,7 @@ export const SYMBOLS: SymbolDef[] = [
     desc: "Автомашинтай батальон. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.2",
     centerGlyph: `<rect x="5" y="9" width="22" height="14" rx="7"/>`,
+    branchSelectable: true,
   },
   {
     id: "rot",
@@ -223,6 +227,7 @@ export const SYMBOLS: SymbolDef[] = [
     desc: "Ротын (батарейн) шатлалын тэмдэг I, тэгш өнцөгт хүрээ. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.2",
     centerGlyph: `<circle cx="16" cy="16" r="6" fill="currentColor"/>`,
+    branchSelectable: true,
   },
 
   // ───────────────────────── Салаа, тасаг, нэгж (§2.3) ─────────────────────────
@@ -234,8 +239,10 @@ export const SYMBOLS: SymbolDef[] = [
     frame: "rect",
     color: "friendly",
     echelon: "c",
-    desc: "Салааны тэмдэглэгээ — зенит, артиллерийн салааг дугуй хүрээгээр тэмдэглэнэ.",
+    desc: "Салааны тэмдэглэгээ — зенит, артиллерийн салааг дугуй хүрээгээр тэмдэглэнэ. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.3",
+    centerGlyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/>`,
+    branchSelectable: true,
   },
   {
     id: "tasag",
@@ -245,8 +252,10 @@ export const SYMBOLS: SymbolDef[] = [
     frame: "rect",
     color: "friendly",
     echelon: "т",
-    desc: "ЯЦБМ-тай тасаг.",
+    desc: "ЯЦБМ-тай тасаг. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.3",
+    centerGlyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/><line x1="20" y1="10" x2="20" y2="22"/>`,
+    branchSelectable: true,
   },
   {
     id: "buleg",
@@ -256,8 +265,10 @@ export const SYMBOLS: SymbolDef[] = [
     frame: "rect",
     color: "friendly",
     echelon: "бү",
-    desc: "ЯЦБМ-тай бүлэг.",
+    desc: "ЯЦБМ-тай бүлэг. Попап цонхноос өөр төрлийн цэрэг сонгож болно.",
     ref: "Т4-2022 §2.3",
+    centerGlyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/><line x1="20" y1="10" x2="20" y2="22"/>`,
+    branchSelectable: true,
   },
   {
     id: "gurval",

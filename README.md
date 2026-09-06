@@ -63,24 +63,54 @@ TessaDEM turned out to be an **elevation** API, not a map-tile service, so
 the basemap comes from OpenTopoMap instead (visually the same style as
 topographic-map.com).
 
-More importantly: the source PDF's *text layer* only gave me the **names**
-of most branch-of-service / weapon / vehicle icons in Chapters 2.4–2.10 and
-the appendices — not the actual hand-drawn glyph geometry (that only exists
-as pixels in scanned table images I can't vectorize). So for entries flagged
-`approximate: true` (shown with a ⚠ note in the app), the **frame shape,
-echelon marks, and affiliation color are exact per the manual**, but the
-short label inside the frame is a stand-in abbreviation, not the manual's
-actual pictorial glyph. Entries without that flag (command-post letter codes
-like ЗХЖШ/ХЗЦК/ОБЕГ, plain unit-echelon boxes, cyber/network diagram icons,
-MP/ОН/hilийн цэрэг colors) are reproduced exactly as specified. If you have
-access to the original vector artwork for the branch icons, I can swap the
-placeholders for the real glyphs.
+The PDF's text layer has no usable Cyrillic ToUnicode mapping (confirmed via
+`pdftotext`), so the manual has to be read visually — pages rendered to
+images with `poppler` (`pdftoppm`), then read directly. Most branch/weapon/
+vehicle/aircraft/operation icons in §2.4–2.10 now use a `glyph` (custom SVG
+line art transcribed from the manual) instead of a generic dot; only a
+handful of entries still fall back to a plain frame + abbreviation
+(`approximate: true`, shown with a ⚠ note in the app) — mainly a few obscure
+appendix icons not yet located in the source.
+
+Unit boxes (Бригад/Хороо/Батальон/Рот, §2.2, and Салаа/Тасаг/Бүлэг, §2.3)
+draw a default branch-of-service glyph inside the frame per the manual, and
+that glyph can be swapped per placement (the popup's "Төрөл, мэргэжлийн
+цэрэг" dropdown) — so e.g. a generic battalion box can be marked as
+specifically "Уулын" (mountain troops) without a separate palette entry per
+branch/size combination.
+
+Boundary lines (§2.8) and area/zone/direction symbols (§2.9) are drawn, not
+dropped as a point icon — see "Шугам, муж зурах" below.
+
+## Шугам, муж зурах (§2.8–§2.9 lines and areas)
+
+The **"Шугам, муж зурах"** button opens a panel to pick a boundary-line
+echelon, a direction/mission-line type, or an area/zone type; the map then
+enters draw mode (crosshair cursor) — click to add each vertex, then either
+press **Enter** or the **"Дуусгах"** button to finish (Escape cancels).
+Lines need ≥2 points, areas ≥3 (auto-closed into a polygon). Click a drawn
+line/area to open its popup (affiliation color, delete) same as a symbol
+marker; Delete/Backspace removes the selected one.
+
+- **`src/types/line.ts` / `src/lib/lineTypes.ts`** — the §2.8/§2.9 catalog
+  and `PlacedLine` data model (an array of `[lat, lng]` vertices, not a
+  single point). Boundary lines are one parameterized type (echelon chosen
+  at draw time) rather than 10 near-duplicate entries, since they're
+  visually identical except which echelon letter repeats along the line.
+- Rendered as Leaflet `Polyline`/`Polygon` in `MapCanvas.tsx`, persisted to
+  `localStorage` separately from point placements (`src/lib/storage.ts`'s
+  `loadLines`/`saveLines`).
+- Not implemented: repeating the echelon letter along a boundary line's
+  full length (the manual repeats it every segment; this app doesn't), and
+  the mission-line/restricted-zone bracket end-caps some §2.9 rows draw —
+  these render as a plain line/polygon with the correct color and dash
+  style, distinguished by name in its popup rather than by a bespoke
+  terminator glyph.
 
 ## What's not built yet
 
-- Boundary-line and area/zone symbols (§2.8–2.9 of the manual) — these are
-  drawn as lines/polygons, a different interaction than dropping a point
-  icon, and were left out of this pass.
-- Multi-device sync (placements are per-browser `localStorage` only).
-- A "rotate" handle for direction-sensitive symbols (arrows/movement icons
-  currently always point the same way).
+- Multi-device sync (placements/lines are per-browser `localStorage` only).
+- A "rotate" handle for direction-sensitive point symbols (arrows/movement
+  icons currently always point the same way).
+- Editing a line/area's vertices after drawing it (delete and redraw
+  instead).

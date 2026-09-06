@@ -75,7 +75,7 @@ export default function SymbolPopupContent({
         </div>
       </div>
 
-      {def.category === "Анги, салбар" && (
+      {def.branchSelectable && (
         <label className="block text-[11px] font-medium text-zinc-600">
           Төрөл, мэргэжлийн цэрэг
           <select
