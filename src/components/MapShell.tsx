@@ -4,6 +4,7 @@ import dynamic from "next/dynamic";
 import { useCallback, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import SymbolPalette from "@/components/SymbolPalette";
+import GlossaryModal from "@/components/GlossaryModal";
 import { loadPlacements, savePlacements } from "@/lib/storage";
 import { getSymbol } from "@/lib/symbols";
 import type { PlacedSymbol, SymbolDef } from "@/types/symbol";
@@ -29,6 +30,7 @@ export default function MapShell() {
 
   const [placements, setPlacements] = useState<PlacedSymbol[]>([]);
   const [pendingSymbolId, setPendingSymbolId] = useState<string | null>(null);
+  const [glossaryOpen, setGlossaryOpen] = useState(false);
   // Tracks which user's saved layout is currently loaded into `placements`.
   const [loadedForUserId, setLoadedForUserId] = useState<string | null>(null);
 
@@ -179,6 +181,13 @@ export default function MapShell() {
           </div>
           <button
             type="button"
+            onClick={() => setGlossaryOpen(true)}
+            className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-zinc-200 shadow-lg backdrop-blur hover:bg-zinc-800"
+          >
+            Нэр томьёоны тайлбар
+          </button>
+          <button
+            type="button"
             onClick={handleClearAll}
             className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-red-400 shadow-lg backdrop-blur hover:bg-zinc-800"
           >
@@ -186,6 +195,8 @@ export default function MapShell() {
           </button>
         </div>
       </div>
+
+      <GlossaryModal open={glossaryOpen} onClose={() => setGlossaryOpen(false)} />
     </div>
   );
 }

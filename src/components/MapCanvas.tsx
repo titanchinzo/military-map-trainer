@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -20,11 +20,14 @@ export const DEFAULT_ZOOM = 16;
 const MARKER_SIZE = 44;
 const HOVER_DELAY_MS = 2200;
 
-function makeDivIcon(def: NonNullable<ReturnType<typeof getSymbol>>) {
+function makeDivIcon(
+  def: NonNullable<ReturnType<typeof getSymbol>>,
+  selected: boolean,
+) {
   const html = renderSymbolSvg(def, { size: MARKER_SIZE });
   return L.divIcon({
     html,
-    className: "mmt-marker",
+    className: `mmt-marker${selected ? " mmt-marker-selected" : ""}`,
     iconSize: [MARKER_SIZE, MARKER_SIZE],
     iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
     popupAnchor: [0, -MARKER_SIZE / 2],
@@ -72,14 +75,19 @@ function DropHandler({
 function ClickToPlaceHandler({
   pendingSymbolId,
   onPlace,
+  onDeselect,
 }: {
   pendingSymbolId: string | null;
   onPlace: (symbolId: string, lat: number, lng: number) => void;
+  onDeselect: () => void;
 }) {
   useMapEvents({
     click(e) {
-      if (!pendingSymbolId) return;
-      onPlace(pendingSymbolId, e.latlng.lat, e.latlng.lng);
+      if (pendingSymbolId) {
+        onPlace(pendingSymbolId, e.latlng.lat, e.latlng.lng);
+      } else {
+        onDeselect();
+      }
     },
   });
   return null;
@@ -104,6 +112,28 @@ export default function MapCanvas({
   const hoverTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
     {},
   );
+  const [selectedUid, setSelectedUid] = useState<string | null>(null);
+
+  // Lets a selected symbol be removed with the Delete/Backspace key, since
+  // opening its popup and clicking "Устгах" is fiddly right after dragging.
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (!selectedUid) return;
+      if (e.key !== "Delete" && e.key !== "Backspace") return;
+      const target = e.target as HTMLElement | null;
+      const isEditingText =
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          target.isContentEditable);
+      if (isEditingText) return;
+      e.preventDefault();
+      onDeleteSymbol(selectedUid);
+      setSelectedUid(null);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [selectedUid, onDeleteSymbol]);
 
   const handleMouseOver = useCallback((uid: string) => {
     clearTimeout(hoverTimers.current[uid]);
@@ -141,6 +171,7 @@ export default function MapCanvas({
       <ClickToPlaceHandler
         pendingSymbolId={pendingSymbolId}
         onPlace={onDropSymbol}
+        onDeselect={() => setSelectedUid(null)}
       />
 
       {placements.map((p) => {
@@ -150,13 +181,14 @@ export default function MapCanvas({
           <Marker
             key={p.uid}
             position={[p.lat, p.lng]}
-            icon={makeDivIcon(def)}
+            icon={makeDivIcon(def, p.uid === selectedUid)}
             draggable
             ref={(instance) => {
               if (instance) markerRefs.current[p.uid] = instance;
               else delete markerRefs.current[p.uid];
             }}
             eventHandlers={{
+              click: () => setSelectedUid(p.uid),
               mouseover: () => handleMouseOver(p.uid),
               mouseout: () => handleMouseOut(p.uid),
               dragend: (e) => {

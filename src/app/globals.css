@@ -38,6 +38,12 @@ body {
   overflow: visible;
 }
 
+/* Blue glow on the currently selected marker, so it's clear what
+   Delete/Backspace will remove. */
+.mmt-marker-selected svg {
+  filter: drop-shadow(0 0 3px #3b82f6) drop-shadow(0 0 6px #3b82f6);
+}
+
 .leaflet-popup-content-wrapper {
   border-radius: 8px;
 }
