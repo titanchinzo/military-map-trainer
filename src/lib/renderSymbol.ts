@@ -34,6 +34,19 @@ export function renderSymbolSvg(
     ? `<text x="${cx}" y="${cy - h / 2 - 5}" text-anchor="middle" font-family="monospace" font-weight="700" font-size="${Math.max(9, size * 0.2)}" fill="${stroke}">${escapeXml(def.echelon)}</text>`
     : "";
 
+  if (def.glyph) {
+    const glyphScale = (size * 0.75) / 32;
+    const gx = cx - 16 * glyphScale;
+    const gy = cy - 16 * glyphScale;
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" overflow="visible">
+    ${selectionRing}
+    ${echelonMark}
+    <g transform="translate(${gx},${gy}) scale(${glyphScale})" color="${stroke}" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+      ${def.glyph}
+    </g>
+  </svg>`;
+  }
+
   const shapeMarkup = renderShape(frame, cx, cy, w, h, stroke);
 
   const labelMarkup = `<text x="${cx}" y="${cy}" text-anchor="middle" dominant-baseline="central" font-family="Arial, sans-serif" font-weight="700" font-size="${fontSize}" fill="${frame === "point" || frame === "arrow" ? stroke : stroke}" style="paint-order: stroke; stroke: white; stroke-width: ${frame === "point" || frame === "arrow" ? 3 : 0}px;">${escapeXml(def.label)}</text>`;

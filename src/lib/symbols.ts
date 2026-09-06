@@ -318,7 +318,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Байлдааны төлөвлөлтөд АКМ, гранатомёт, пулемёт зэрэг нэг бүрийн буудлагын зэвсэглэлийн таних тэмдгээр ялгаж зурна.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<line x1="6" y1="16" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="20"/><line x1="23" y1="12" x2="23" y2="20"/>`,
   },
   {
     id: "yavganerguul",
@@ -329,7 +329,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Явган эргүүлийн тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<ellipse cx="16" cy="16" rx="9" ry="5" stroke-dasharray="3 2"/><circle cx="16" cy="16" r="1.8" fill="currentColor"/><path d="M25 13 L30 11 M28 9 L30 11 L28 13"/>`,
   },
   {
     id: "nuutsmanaa",
@@ -340,7 +340,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Нууц манааны байр.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M16 8 L24 23 H8 Z"/><circle cx="16" cy="18" r="1.6" fill="currentColor"/>`,
   },
   {
     id: "tagnuulbuleg",
@@ -351,7 +351,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тагнуулын бүлгийн тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H14 M9 11 L4 16 L9 21"/><circle cx="21" cy="16" r="5" fill="currentColor"/><line x1="17" y1="20" x2="25" y2="12"/>`,
   },
   {
     id: "dairahotryad",
@@ -362,7 +362,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Дайрах отрядын тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><rect x="14" y="12" width="8" height="8"/>`,
   },
   {
     id: "tagnuulotryad",
@@ -373,7 +373,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тагнуулын отрядын тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><ellipse cx="20" cy="16" rx="7" ry="4.5"/>`,
   },
   {
     id: "tagnuultusgai",
@@ -384,7 +384,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тагнуулын тусгай сэргийлэхийн тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><circle cx="20" cy="16" r="5"/>`,
   },
   {
     id: "baildaanytagnuul",
@@ -395,7 +395,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Байлдааны тагнуулын сэргийлэхийн тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><ellipse cx="20" cy="16" rx="7" ry="4.5"/><line x1="20" y1="11.5" x2="20" y2="20.5"/>`,
   },
   {
     id: "officertagnuul",
@@ -406,7 +406,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Офицерын тагнуулын сэргийлэхийн тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><ellipse cx="20" cy="16" rx="7" ry="4.5"/><text x="20" y="19" font-size="5.5" text-anchor="middle" stroke="none" fill="currentColor">ОФ</text>`,
   },
   {
     id: "sergiylehmashine",
@@ -417,7 +417,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Сэргийлэхийн машины тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><ellipse cx="20" cy="16" rx="7" ry="4.5"/><line x1="15" y1="20" x2="25" y2="12"/>`,
   },
   {
     id: "yavgansergiyleh",
@@ -428,7 +428,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Явган сэргийлэхийн тэмдэглэгээ.",
     ref: "Т4-2022 §2.3",
-    approximate: true,
+    glyph: `<path d="M4 16 H12 M8 11 L4 16 L8 21"/><circle cx="20" cy="16" r="5"/><line x1="16" y1="20" x2="24" y2="12"/>`,
   },
 
   // ───────────────────────── Төрөл, мэргэжлийн цэрэг (§2.4) ─────────────────────────
@@ -441,7 +441,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Тухайн анги, салбар, нэгжийн суурилсан үндсэн цэргийн техник (ЯЦБМ, хуягт тээвэрлэгч, автомашин)-ийн тэмдгийг хэрэглэнэ.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M4 6h12l4 3-4 3H4z"/><path d="M4 13h12l4 3-4 3H4z"/><path d="M4 20h12l4 3-4 3H4z"/>`,
   },
   {
     id: "holimogMB",
@@ -452,7 +452,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "ЯЦБМ, хуягт тээвэрлэгч, автомашинтай холимог мотобуудлагын салбар.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<ellipse cx="16" cy="16" rx="11" ry="7"/>`,
   },
   {
     id: "turgenhuchin",
@@ -463,7 +463,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Түргэн байрлах хүчний тэмдэг. Шатлалын хүрээг ашиглан нэгжийг тодотгоно.",
     ref: "Т4-2022 §2.4 / Хавсралт 1",
-    approximate: true,
+    glyph: `<path d="M16 8 L16 22 M16 12 L9 8 M16 12 L23 8"/>`,
   },
   {
     id: "tusgaitomilolt",
@@ -474,7 +474,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Тусгай томилолтын анги, салбарын тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 1",
-    approximate: true,
+    glyph: `<circle cx="16" cy="16" r="10"/><path d="M16 10 L16 21 M16 14 L11 11 M16 14 L21 11"/>`,
   },
   {
     id: "shuherdesant",
@@ -485,7 +485,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Шүхэр десантын батальон/рот/салаа/тасгийн тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 1",
-    approximate: true,
+    glyph: `<path d="M6 10 H26 L16 24 Z"/>`,
   },
   {
     id: "uulyn",
@@ -496,7 +496,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Уулын батальоны тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 1",
-    approximate: true,
+    glyph: `<path d="M16 6 L26 24 H6 Z" fill="currentColor"/>`,
   },
   {
     id: "tagnuul",
@@ -507,7 +507,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Тагнуулын батальон/ротын ерөнхий тэмдэг.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<line x1="9" y1="23" x2="23" y2="9"/>`,
   },
   {
     id: "morьttsereg",
@@ -518,7 +518,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Морьт цэргийн тэмдэг.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M16 8 L16 20 M16 12 L9 8 M16 12 L23 8 M12 16 L20 24"/>`,
   },
   {
     id: "tank",
@@ -529,7 +529,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Танкийн ерөнхий тэмдэг — ромбо хэлбэрийн хүрээ.",
     ref: "Т4-2022 §2.4 / §2.10",
-    approximate: true,
+    glyph: `<path d="M16 6 L26 16 L16 26 L6 16 Z"/>`,
   },
   {
     id: "nisehhuchin",
@@ -540,7 +540,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Агаарын нисэх хүчний ерөнхий тэмдэг.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M16 8 L16 19 M16 12 L9 8 M16 12 L23 8"/><circle cx="16" cy="22" r="2.2"/>`,
   },
   {
     id: "kiber",
@@ -551,7 +551,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Кибер аюулгүй байдлын цэргийн ерөнхий тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 6",
-    approximate: true,
+    glyph: `<text x="16" y="23" font-size="21" text-anchor="middle" stroke="none" fill="currentColor" font-family="Georgia, 'Times New Roman', serif">&#931;</text>`,
   },
   {
     id: "artilleryEr",
@@ -562,7 +562,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Артиллерийн цэргийн ерөнхий тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 3",
-    approximate: true,
+    glyph: `<circle cx="16" cy="16" r="6" fill="currentColor"/>`,
   },
   {
     id: "tsadh",
@@ -573,7 +573,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэрэг-агаарын довтолгооноос хамгаалах цэргийн тэмдэг.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M16 6 L16 24 M11 11 L16 6 L21 11"/><line x1="11" y1="18" x2="21" y2="18"/><line x1="11" y1="21" x2="21" y2="21"/>`,
   },
   {
     id: "zenitpuujinart",
@@ -584,7 +584,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Зенитийн пуужин-артиллерийн хосолсон цогцолборын тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 4",
-    approximate: true,
+    glyph: `<path d="M16 6 L16 24 M11 11 L16 6 L21 11"/><line x1="11" y1="18" x2="21" y2="18"/><line x1="9" y1="24" x2="23" y2="24"/>`,
   },
   {
     id: "zenitpuujin",
@@ -595,7 +595,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Зенитийн пуужингийн ерөнхий тэмдэг (Т-тактикийн, ОТ-оператив-тактикийн, ОЦ-олон цэнэгт).",
     ref: "Т4-2022 §2.4 / Хавсралт 4",
-    approximate: true,
+    glyph: `<path d="M11 24 V14 Q11 6 16 6 Q21 6 21 14 V24 Z"/>`,
   },
   {
     id: "rls",
@@ -606,7 +606,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Радиолокацийн станцын ерөнхий тэмдэглэгээ.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M8 22 L16 8 L24 22 Z"/><line x1="6" y1="24" x2="10" y2="20"/><line x1="26" y1="24" x2="22" y2="20"/>`,
   },
   {
     id: "holboo",
@@ -617,7 +617,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Холбооны цэргийн тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 7",
-    approximate: true,
+    glyph: `<path d="M18 6 L10 18 H15 L13 26 L23 13 H17 Z"/>`,
   },
   {
     id: "radiotagnuul",
@@ -628,7 +628,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Радио тагнуулын тэмдэг.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M6 22 Q11 14 16 20 Q21 26 26 10"/><path d="M22 8 L27 9 L25 14"/>`,
   },
   {
     id: "medeeleлsetgel",
@@ -639,7 +639,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Мэдээлэл, сэтгэл зүйн хангалтын цэргийн тэмдэг.",
     ref: "Т4-2022 §2.4 / §9",
-    approximate: true,
+    glyph: `<path d="M16 12 V26 M9 8 Q9 15 16 15 Q23 15 23 8"/>`,
   },
   {
     id: "tsergiinbairzui",
@@ -650,7 +650,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэргийн байр зүйн алба.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M16 8 L24 23 Q16 26 8 23 Z"/>`,
   },
   {
     id: "hemzhilzui",
@@ -661,7 +661,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэргийн зэвсэглэл, техникийн хэмжил зүйн алба.",
     ref: "Т4-2022 §2.4 / §41.7",
-    approximate: true,
+    glyph: `<rect x="6" y="12" width="20" height="8"/><line x1="10" y1="16" x2="22" y2="16"/><circle cx="19" cy="16" r="1.3" fill="currentColor"/>`,
   },
   {
     id: "orionZaiTandalt",
@@ -672,7 +672,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Орон зайн тандалт судалгааны алба.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M20 8 Q10 8 10 18 L10 24 M10 24 L7 21 M10 24 L13 21"/><circle cx="21" cy="7" r="1.5" fill="currentColor"/>`,
   },
   {
     id: "tsaguur",
@@ -683,7 +683,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цаг уурын хангалтын алба.",
     ref: "Т4-2022 §2.4 / §40.10",
-    approximate: true,
+    glyph: `<line x1="8" y1="10" x2="8" y2="18"/><path d="M8 14 H24 M20 10 L24 14 L20 18"/>`,
   },
   {
     id: "chb",
@@ -694,7 +694,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цацраг, хими, биологиос хамгаалах цэргийн тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 5",
-    approximate: true,
+    glyph: `<circle cx="11" cy="14" r="4"/><circle cx="21" cy="14" r="4"/><circle cx="16" cy="20" r="1.5" fill="currentColor"/>`,
   },
   {
     id: "tsergiinInj",
@@ -705,7 +705,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Инженерийн цэргийн тэмдэг.",
     ref: "Т4-2022 §2.4 / Хавсралт 6",
-    approximate: true,
+    glyph: `<path d="M8 24 V10 H24 V24"/>`,
   },
   {
     id: "guuruus",
@@ -716,7 +716,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Гүүр, ус гатлалтын анги, салбарын тэмдэг.",
     ref: "Т4-2022 §2.4",
-    approximate: true,
+    glyph: `<path d="M4 13 Q8 9 12 13 T20 13 T28 13"/><path d="M4 19 Q8 15 12 19 T20 19 T28 19"/>`,
   },
   {
     id: "barilga",
@@ -727,7 +727,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Барилга, инженерийн цэргийн анги, салбар.",
     ref: "Т4-2022 §2.4 / Хавсралт 11",
-    approximate: true,
+    glyph: `<path d="M6 24 V14 L16 6 L26 14 V24 Z"/>`,
   },
   {
     id: "materialhang",
@@ -738,7 +738,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Материалын хангалтын алба.",
     ref: "Т4-2022 §2.4 / Хавсралт 10",
-    approximate: true,
+    glyph: `<path d="M9 8 V20 Q9 24 13 24 H22"/>`,
   },
   {
     id: "tsergiinzevsэglэl",
@@ -749,7 +749,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэргийн зэвсэглэлийн хангалтын алба.",
     ref: "Т4-2022 §2.4 / Хавсралт 11",
-    approximate: true,
+    glyph: `<circle cx="16" cy="13" r="5"/><circle cx="16" cy="13" r="1.3" fill="currentColor"/><line x1="16" y1="18" x2="16" y2="24"/>`,
   },
   {
     id: "tsergiintehnik",
@@ -760,7 +760,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэргийн техникийн хангалтын алба.",
     ref: "Т4-2022 §2.4 / Хавсралт 12",
-    approximate: true,
+    glyph: `<path d="M8 12 L14 16 L8 20 Z M24 12 L18 16 L24 20 Z"/><line x1="14" y1="16" x2="18" y2="16"/>`,
   },
   {
     id: "tsergiinhunemn",
@@ -771,7 +771,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэргийн эрүүл мэндийн хангалтын алба.",
     ref: "Т4-2022 §2.4 / Хавсралт 14",
-    approximate: true,
+    glyph: `<line x1="16" y1="9" x2="16" y2="23"/><line x1="9" y1="16" x2="23" y2="16"/>`,
   },
   {
     id: "tsergiintsagdaa",
@@ -815,7 +815,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Дайсны амьд хэл, баримт бичиг, зэвсэглэл, техникийг олзлох зорилгоор жижиг хүчээр гэнэт хийх богино хугацааны ажиллагаа.",
     ref: "Т4-2022 §2.5",
-    approximate: true,
+    glyph: `<path d="M6 16 L26 16 M20 10 L26 16 L20 22"/><path d="M6 10 Q10 16 6 22"/>`,
   },
   {
     id: "haiguul",
@@ -826,7 +826,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Хайгуул хийж буй салбарын ажиллагааны чиглэл.",
     ref: "Т4-2022 §2.5",
-    approximate: true,
+    glyph: `<path d="M22 16 H8 M13 10 L8 16 L13 22"/><path d="M22 10 A6 6 0 1 1 22 22"/>`,
   },
   {
     id: "merdenhoolt",
@@ -837,7 +837,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Ухарч байгаа дайсныг мөрдөн хөөх ажиллагаа.",
     ref: "Т4-2022 §2.5 / §19.1",
-    approximate: true,
+    glyph: `<path d="M14 11 L9 16 L14 21"/><line x1="14" y1="16" x2="18" y2="16" stroke-dasharray="2 2"/><path d="M27 11 L22 16 L27 21"/><line x1="18" y1="16" x2="22" y2="16"/>`,
   },
   {
     id: "buslэh",
@@ -848,7 +848,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Дайсны бүлэглэлийг тодорхой чиглэлд бүслэн тусгаарлах ажиллагаа.",
     ref: "Т4-2022 §2.5 / §23",
-    approximate: true,
+    glyph: `<path d="M23 9 A10 10 0 1 0 25 16"/><path d="M25 16 L28 12 M25 16 L21 14"/>`,
   },
   {
     id: "buslenustgah",
@@ -859,7 +859,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Бүслэгдсэн дайсны бүлэглэлийг устгах ажиллагаа.",
     ref: "Т4-2022 §2.5 / §23",
-    approximate: true,
+    glyph: `<circle cx="16" cy="16" r="10"/><path d="M10 10 L22 22 M22 10 L10 22"/>`,
   },
   {
     id: "orooh",
@@ -870,7 +870,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Хүч хэрэгслийн ороох маневр.",
     ref: "Т4-2022 §2.5 / §1.2.3",
-    approximate: true,
+    glyph: `<rect x="11" y="13" width="7" height="6"/><path d="M25 16 A10 10 0 1 1 20 8"/><path d="M20 8 L24 7 M20 8 L21 11"/>`,
   },
   {
     id: "toiroh",
@@ -881,7 +881,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Хүч хэрэгслийн тойрох маневр.",
     ref: "Т4-2022 §2.5 / §1.2.3",
-    approximate: true,
+    glyph: `<rect x="12" y="13" width="7" height="6"/><path d="M20 9 A9 9 0 1 0 21 23"/><path d="M21 23 L24 20 M21 23 L18 25"/>`,
   },
   {
     id: "tuiveeh",
@@ -892,7 +892,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Дайсны байрлалын район, байлдааны журам дотор явуулах түйвээх ажиллагаа.",
     ref: "Т4-2022 §14",
-    approximate: true,
+    glyph: `<path d="M4 10 L18 15 M4 10 L9 10 M4 10 L6 13"/><path d="M4 22 L18 17 M4 22 L9 22 M4 22 L6 19"/><path d="M18 8 Q26 16 18 24"/>`,
   },
   {
     id: "tulgarah",
@@ -903,7 +903,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Талууд байлдааны үүргээ давшилтаар шийдвэрлэхийг эрмэлзсэн үед үүсэх тулгарах байлдаан.",
     ref: "Т4-2022 §25",
-    approximate: true,
+    glyph: `<line x1="4" y1="12" x2="14" y2="12"/><line x1="18" y1="12" x2="28" y2="12"/><line x1="4" y1="20" x2="14" y2="20"/><line x1="18" y1="20" x2="28" y2="20"/><line x1="16" y1="8" x2="16" y2="24"/>`,
   },
   {
     id: "dairalt",
@@ -914,7 +914,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Хот, суурин дахь байлдаан, бэхлэгдсэн район, бааз руу давших үеийн дайралт.",
     ref: "Т4-2022 §21.12",
-    approximate: true,
+    glyph: `<path d="M8 16 H24 M13 11 L8 16 L13 21"/><line x1="24" y1="11" x2="24" y2="21"/>`,
   },
 
   // ───────────────────────── Гал ба цохилт (§2.6) ─────────────────────────
@@ -927,7 +927,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Галын хэрэгслийн үндсэн сектор.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<circle cx="6" cy="16" r="2" fill="currentColor"/><path d="M8 16 H24 M19 11 L24 16 L19 21"/>`,
   },
   {
     id: "hyralduulsangal",
@@ -938,7 +938,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Хуралдуулсан галын зааг.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<line x1="4" y1="16" x2="28" y2="16"/><line x1="12" y1="12" x2="12" y2="20"/><line x1="20" y1="12" x2="20" y2="20"/>`,
   },
   {
     id: "hodolgoongui_haalt",
@@ -949,7 +949,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Хөдөлгөөнгүй дан хаалт гал.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<line x1="16" y1="8" x2="16" y2="24"/><line x1="10" y1="8" x2="22" y2="8"/><line x1="10" y1="24" x2="22" y2="24"/>`,
   },
   {
     id: "daraalanhyral",
@@ -960,7 +960,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Дараалан хуралдуулсан гал.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<line x1="16" y1="6" x2="16" y2="26"/><line x1="12" y1="6" x2="20" y2="6"/><rect x="13" y="10" width="6" height="4"/><rect x="13" y="16" width="6" height="4"/><line x1="12" y1="26" x2="20" y2="26"/>`,
   },
   {
     id: "nisehongots_str",
@@ -971,7 +971,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Онгоцны төрөл, огноо, цаг минутыг тэмдэглэнэ.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 24 M16 4 L13 8 M16 4 L19 8"/><path d="M16 15 C8 9 4 11 4 15 C4 19 8 21 16 16"/><path d="M16 15 C24 9 28 11 28 15 C28 19 24 21 16 16"/>`,
   },
   {
     id: "nisdegtereg_str",
@@ -982,7 +982,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Нисдэг тэрэгний төрөл, огноо, цаг минутыг тэмдэглэнэ.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 22"/><path d="M16 4 L13 8 M16 4 L19 8"/><path d="M4 15 L14 10 V20 Z"/><path d="M28 15 L18 10 V20 Z"/>`,
   },
   {
     id: "puujin_str",
@@ -993,7 +993,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Пуужингийн цохилтын тэмдэглэгээ.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<circle cx="16" cy="16" r="8"/><circle cx="16" cy="16" r="3" fill="currentColor"/>`,
   },
   {
     id: "tsomiin_str",
@@ -1004,7 +1004,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Цөмийн цохилтын тэмдэглэгээ.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<circle cx="16" cy="16" r="8"/><circle cx="16" cy="16" r="2.5" fill="currentColor"/>`,
   },
   {
     id: "tsomiinEsrэg",
@@ -1015,7 +1015,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "hostile",
     desc: "Эсрэг талын цөмийн цохилт хийж болзошгүй гэж тооцоолсон цэг.",
     ref: "Т4-2022 §2.6",
-    approximate: true,
+    glyph: `<circle cx="16" cy="16" r="8"/><circle cx="16" cy="16" r="2.5" fill="currentColor"/>`,
   },
 
   // ───────────────────────── Хөдөлгөөн (§2.7) ─────────────────────────
@@ -1028,7 +1028,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Удирдлагын байрын аяны журмын хөдөлгөөн.",
     ref: "Т4-2022 §2.7",
-    approximate: true,
+    glyph: `<rect x="14" y="6" width="8" height="5"/><path d="M14 6 V16"/><path d="M14 16 H4 M9 12 L4 16 L9 20"/>`,
   },
   {
     id: "horoonyDavshilt",
@@ -1040,7 +1040,7 @@ export const SYMBOLS: SymbolDef[] = [
     echelon: "III",
     desc: "Хорооны давшилтын чиглэл.",
     ref: "Т4-2022 §2.7",
-    approximate: true,
+    glyph: `<path d="M26 16 H6 M12 10 L6 16 L12 22"/>`,
   },
   {
     id: "batalonyDavshilt",
@@ -1052,7 +1052,7 @@ export const SYMBOLS: SymbolDef[] = [
     echelon: "II",
     desc: "Батальоны давшилтын чиглэл.",
     ref: "Т4-2022 §2.7",
-    approximate: true,
+    glyph: `<path d="M26 16 H6 M12 10 L6 16 L12 22"/>`,
   },
   {
     id: "rotynDavshilt",
@@ -1064,7 +1064,7 @@ export const SYMBOLS: SymbolDef[] = [
     echelon: "I",
     desc: "Ротын давшилтын чиглэл.",
     ref: "Т4-2022 §2.7",
-    approximate: true,
+    glyph: `<path d="M26 16 H6 M12 10 L6 16 L12 22"/>`,
   },
   {
     id: "tomorzam",
@@ -1075,7 +1075,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Цэргийг төмөр замаар тээвэрлэх тэмдэглэгээ.",
     ref: "Т4-2022 §2.7",
-    approximate: true,
+    glyph: `<line x1="6" y1="13" x2="26" y2="13"/><circle cx="10" cy="17" r="2"/><circle cx="14" cy="17" r="2"/><circle cx="20" cy="17" r="2"/><circle cx="24" cy="17" r="2"/>`,
   },
   {
     id: "agaaraar",
@@ -1086,7 +1086,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Цэргийг агаараар тээвэрлэх тэмдэглэгээ.",
     ref: "Т4-2022 §2.7",
-    approximate: true,
+    glyph: `<line x1="16" y1="10" x2="16" y2="24"/><path d="M16 10 L11 6 M16 10 L21 6 M16 14 L11 12 M16 14 L21 12"/><circle cx="16" cy="26" r="2.2" fill="currentColor"/>`,
   },
 
   // ───────────────────────── Явган зэвсэг (§2.10 Хүснэгт 13) ─────────────────────────
@@ -1099,7 +1099,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Автомат буу/винтовын тэмдэг.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="5" y1="16" x2="27" y2="16"/><line x1="11" y1="11" x2="11" y2="21"/>`,
   },
   {
     id: "granatAvtomat",
@@ -1110,7 +1110,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Гранат шидэгч бүхий автомат.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="5" y1="16" x2="27" y2="16"/><line x1="11" y1="11" x2="11" y2="21"/><line x1="11" y1="21" x2="15" y2="21"/>`,
   },
   {
     id: "avtomatGranatomyot",
@@ -1121,7 +1121,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Автомат гранат шидэгч (АГС).",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="5" y1="16" x2="24" y2="16"/><line x1="11" y1="11" x2="11" y2="21"/><path d="M24 16 L29 11"/><text x="25" y="24" font-size="7" stroke="none" fill="currentColor">A</text>`,
   },
   {
     id: "hagasAvtomatGranatomyot",
@@ -1132,7 +1132,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Хагас автомат гранат шидэгч.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="5" y1="16" x2="24" y2="16"/><line x1="11" y1="11" x2="11" y2="21"/><path d="M24 16 L29 11"/><text x="25" y="24" font-size="7" stroke="none" fill="currentColor">X</text>`,
   },
   {
     id: "mergenBuudagch",
@@ -1143,7 +1143,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Мэргэн буудагчийн винтов.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="8" y1="14" x2="22" y2="14"/><line x1="10" y1="19" x2="14" y2="19"/><line x1="18" y1="19" x2="22" y2="19"/>`,
   },
   {
     id: "tasgiinPulemyot",
@@ -1154,7 +1154,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Тасгийн пулемёт.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="5" y1="16" x2="22" y2="16"/><path d="M22 11 L28 16 L22 21"/>`,
   },
   {
     id: "rotynPulemyot",
@@ -1165,7 +1165,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Ротын пулемёт.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="4" y1="16" x2="19" y2="16"/><line x1="10" y1="11" x2="10" y2="21"/><path d="M19 11 L25 16 L19 21"/>`,
   },
   {
     id: "garGranatomyot",
@@ -1176,7 +1176,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Гар гранатомёт.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="4" y1="16" x2="18" y2="16"/><line x1="9" y1="12" x2="9" y2="20"/><path d="M18 12 L24 16 L18 20"/>`,
   },
   {
     id: "suuurtGranatomyot",
@@ -1187,7 +1187,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Суурьт гранатомёт.",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="3" y1="16" x2="17" y2="16"/><line x1="7" y1="12" x2="7" y2="20"/><line x1="10" y1="12" x2="10" y2="20"/><path d="M17 12 L23 16 L17 20"/>`,
   },
   {
     id: "avtomatGranatomyot2",
@@ -1198,7 +1198,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Автомат гранатомёт (жишээ нь АГС-17).",
     ref: "Т4-2022 §2.10 Хүснэгт 13",
-    approximate: true,
+    glyph: `<line x1="2" y1="16" x2="16" y2="16"/><line x1="5" y1="12" x2="5" y2="20"/><line x1="8" y1="12" x2="8" y2="20"/><line x1="11" y1="12" x2="11" y2="20"/><path d="M16 12 L22 16 L16 20"/>`,
   },
 
   // ───────────────────────── Тээврийн хэрэгсэл, техник (§2.10 Хүснэгт 14–15) ─────────────────────────
@@ -1211,7 +1211,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "85мм хүртэлх калибрын танк эсэргүүцэх буу.",
     ref: "Т4-2022 §2.10 Хүснэгт 14",
-    approximate: true,
+    glyph: `<line x1="4" y1="13" x2="19" y2="13"/><line x1="4" y1="16" x2="19" y2="16"/><line x1="4" y1="19" x2="19" y2="19"/><path d="M19 10 L26 16 L19 22"/>`,
   },
   {
     id: "tankAT2",
@@ -1222,7 +1222,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "100мм хүртэлх калибрын танк эсэргүүцэх их буу.",
     ref: "Т4-2022 §2.10 Хүснэгт 14",
-    approximate: true,
+    glyph: `<line x1="3" y1="13" x2="18" y2="13"/><line x1="3" y1="16" x2="18" y2="16"/><line x1="3" y1="19" x2="18" y2="19"/><path d="M18 10 L25 16 L18 22"/><line x1="21" y1="12" x2="21" y2="20"/>`,
   },
   {
     id: "tankATzaluurt",
@@ -1233,7 +1233,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Танк эсэргүүцэх залуурт пуужин.",
     ref: "Т4-2022 §2.10 Хүснэгт 14",
-    approximate: true,
+    glyph: `<line x1="3" y1="16" x2="7" y2="16"/><rect x="7" y="12" width="10" height="8"/><path d="M17 12 L24 16 L17 20"/>`,
   },
   {
     id: "yatsBM",
@@ -1244,7 +1244,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Явган цэргийн байлдааны машин.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/><line x1="20" y1="10" x2="20" y2="22"/>`,
   },
   {
     id: "huyagtTeeverlegch",
@@ -1255,7 +1255,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Хуягт тээвэрлэгч.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M5 10 H20 L27 16 L20 22 H5 Z"/>`,
   },
   {
     id: "tankIcon",
@@ -1266,7 +1266,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Танкийн ерөнхий тэмдэг.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/>`,
   },
   {
     id: "tankZahiragch",
@@ -1277,7 +1277,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Захирагчийн танк.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/><text x="16" y="20" font-size="9" text-anchor="middle" stroke="none" fill="currentColor">3</text>`,
   },
   {
     id: "hovogchTank",
@@ -1288,7 +1288,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Хөвөгч танк.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/><line x1="27" y1="16" x2="31" y2="16"/><line x1="31" y1="13" x2="31" y2="19"/>`,
   },
   {
     id: "ognyometTank",
@@ -1299,7 +1299,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Огнёмёттой танк.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/><path d="M16 5 V1 Q19 1 19 4"/>`,
   },
   {
     id: "minTrallTank",
@@ -1310,7 +1310,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Минийн тралл зүүсэн танк.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/><path d="M5 16 H1 M1 12 V20"/>`,
   },
   {
     id: "buldozerTank",
@@ -1321,7 +1321,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Бульдозертой танк.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/><path d="M5 16 H1 M1 11 V21 M1 11 H4"/>`,
   },
   {
     id: "avtomashin",
@@ -1332,7 +1332,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Автомашин.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<rect x="5" y="9" width="22" height="14" rx="7"/>`,
   },
   {
     id: "huyaglasanAvto",
@@ -1343,7 +1343,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Хуягласан автомашин.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<rect x="5" y="9" width="22" height="14" rx="7"/><line x1="21" y1="9" x2="21" y2="23"/>`,
   },
   {
     id: "mototsikл",
@@ -1354,7 +1354,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Мотоцикл.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<line x1="8" y1="13" x2="24" y2="13"/><line x1="16" y1="13" x2="16" y2="19"/><circle cx="16" cy="23" r="4"/>`,
   },
   {
     id: "gemtelteiTehnik",
@@ -1365,7 +1365,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "hostile",
     desc: "Гэмтэлтэй/эвдэрсэн техник — улаан өнгөөр олзолсон техникийг тэмдэглэнэ.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z"/><line x1="11" y1="11" x2="21" y2="21"/><line x1="21" y1="11" x2="11" y2="21"/>`,
   },
   {
     id: "sergeenBosgohBoлomжgui",
@@ -1376,7 +1376,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "hostile",
     desc: "Сэргээн босгох боломжгүй техник.",
     ref: "Т4-2022 §2.10 Хүснэгт 15",
-    approximate: true,
+    glyph: `<path d="M16 5 L27 16 L16 27 L5 16 Z" fill="currentColor" fill-opacity="0.25"/><line x1="10" y1="10" x2="22" y2="22"/><line x1="22" y1="10" x2="10" y2="22"/>`,
   },
 
   // ───────────────────────── Агаарын хэрэгсэл (§2.10 Хүснэгт 16) ─────────────────────────
@@ -1389,7 +1389,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Дайрагч онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 27 M16 4 L13 8 M16 4 L19 8"/><path d="M16 16 C8 10 4 12 4 16 C4 20 8 22 16 17"/><path d="M16 16 C24 10 28 12 28 16 C28 20 24 22 16 17"/>`,
   },
   {
     id: "sonyogchOngots",
@@ -1400,7 +1400,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Сөнөөгч онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 27 M16 4 L13 8 M16 4 L19 8"/><path d="M16 16 C8 10 4 12 4 16 C4 20 8 22 16 17"/><path d="M16 16 C24 10 28 12 28 16 C28 20 24 22 16 17"/><line x1="16" y1="22" x2="16" y2="26"/>`,
   },
   {
     id: "bombogdogchOngots",
@@ -1411,7 +1411,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Бөмбөгдөгч онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 24 M16 4 L13 8 M16 4 L19 8"/><path d="M16 15 C8 9 4 11 4 15 C4 19 8 21 16 16"/><path d="M16 15 C24 9 28 11 28 15 C28 19 24 21 16 16"/><circle cx="16" cy="26" r="2.4" fill="currentColor"/>`,
   },
   {
     id: "tagnuulynOngots",
@@ -1422,7 +1422,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тагнуулын онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 27 M16 4 L13 8 M16 4 L19 8"/><path d="M16 16 C8 10 4 12 4 16 C4 20 8 22 16 17"/><path d="M16 16 C24 10 28 12 28 16 C28 20 24 22 16 17"/><line x1="16" y1="24" x2="12" y2="26"/>`,
   },
   {
     id: "teevrinOngots",
@@ -1433,7 +1433,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тээврийн онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 22 M16 4 L13 8 M16 4 L19 8"/><path d="M16 14 C8 8 4 10 4 14 C4 18 8 20 16 15"/><path d="M16 14 C24 8 28 10 28 14 C28 18 24 20 16 15"/><circle cx="16" cy="24" r="3.2"/>`,
   },
   {
     id: "rtsOngots",
@@ -1444,7 +1444,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Радио цахим тэмцлийн онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 6 L16 27 M16 6 L11 10 M16 6 L21 10 M16 6 L8 8 M16 6 L24 8"/><path d="M16 17 C8 11 4 13 4 17 C4 21 8 23 16 18"/><path d="M16 17 C24 11 28 13 28 17 C28 21 24 23 16 18"/>`,
   },
   {
     id: "irgeniinOngots",
@@ -1455,7 +1455,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Иргэний онгоц.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<line x1="16" y1="9" x2="16" y2="23"/><path d="M16 16 C8 10 4 12 4 16 C4 20 8 22 16 17"/><path d="M16 16 C24 10 28 12 28 16 C28 20 24 22 16 17"/>`,
   },
   {
     id: "baildaanyNisdegTereg",
@@ -1466,7 +1466,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Байлдааны нисдэг тэрэг.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 24"/><path d="M16 4 L13 8 M16 4 L19 8"/><path d="M4 16 L14 11 V21 Z"/><path d="M28 16 L18 11 V21 Z"/><line x1="10" y1="24" x2="22" y2="24"/>`,
   },
   {
     id: "tagnuulynNisdegTereg",
@@ -1477,7 +1477,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тагнуулын нисдэг тэрэг.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 24"/><path d="M16 4 L13 8 M16 4 L19 8"/><path d="M4 16 L14 11 V21 Z"/><path d="M28 16 L18 11 V21 Z"/><line x1="16" y1="24" x2="12" y2="27"/>`,
   },
   {
     id: "teevriinNisdegTereg",
@@ -1488,7 +1488,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "friendly",
     desc: "Тээврийн нисдэг тэрэг.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<path d="M16 4 L16 20"/><path d="M16 4 L13 8 M16 4 L19 8"/><path d="M4 15 L14 10 V20 Z"/><path d="M28 15 L18 10 V20 Z"/><circle cx="16" cy="24" r="3.2"/>`,
   },
   {
     id: "nisgegchgui",
@@ -1499,7 +1499,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Нисгэгчгүй нисэх хэрэгсэл (дрон).",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<line x1="9" y1="12" x2="9" y2="20"/><line x1="23" y1="12" x2="23" y2="20"/><line x1="9" y1="16" x2="23" y2="16"/><line x1="16" y1="16" x2="16" y2="22"/>`,
   },
   {
     id: "tagnuulynNisgegchgui",
@@ -1510,7 +1510,7 @@ export const SYMBOLS: SymbolDef[] = [
     color: "black",
     desc: "Тагнуулын нисгэгчгүй нисэх хэрэгсэл.",
     ref: "Т4-2022 §2.10 Хүснэгт 16",
-    approximate: true,
+    glyph: `<line x1="9" y1="12" x2="9" y2="20"/><line x1="23" y1="12" x2="23" y2="20"/><line x1="9" y1="16" x2="23" y2="16"/><line x1="16" y1="16" x2="16" y2="22"/><circle cx="16" cy="25" r="1.8" fill="currentColor"/>`,
   },
 
   // ───────────────────────── Кибер, холбооны сүлжээ (Хавсралт 6) ─────────────────────────

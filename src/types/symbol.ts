@@ -64,6 +64,15 @@ export interface SymbolDef {
   ref: string;
   /** True when `label` is a stand-in abbreviation rather than the manual's literal icon/text. */
   approximate?: boolean;
+  /**
+   * A precise bare-line-art glyph transcribed directly from the manual's
+   * figure (used for §2.4–§2.10 branch/weapon/vehicle/aircraft icons, which
+   * the manual draws as free-standing line art rather than inside a
+   * frame+label box). Raw SVG markup in a 32×32 local coordinate space
+   * centered at (16,16); rendered with currentColor stroke, no fill, in
+   * place of the frame+label rendering. See renderSymbol.ts.
+   */
+  glyph?: string;
 }
 
 /** A symbol instance the trainee has dropped onto the map. */
