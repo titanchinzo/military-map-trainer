@@ -12,6 +12,10 @@ export function renderSymbolSvg(
     size?: number;
     selected?: boolean;
     colorOverride?: AffiliationColor;
+    /** A branch-of-service glyph (another SymbolDef's `glyph`) drawn inside
+     * this symbol's frame in place of its text label — lets a generic unit
+     * box (e.g. "Батальон") be marked as a specific branch (e.g. "Уулын"). */
+    centerGlyph?: string;
   } = {},
 ): string {
   const size = opts.size ?? 48;
@@ -21,7 +25,7 @@ export function renderSymbolSvg(
   const frame = isHostile && isUnitFrame(def.frame) ? "hexagon" : def.frame;
 
   const cx = size / 2;
-  const cy = size / 2 + (def.echelon ? 6 : 0);
+  const cy = size / 2 + (def.echelon ? 4 : 0);
   const w = size - 8;
   const h = frame === "rect" || frame === "ellipse" ? size * 0.56 : size - 14;
 
@@ -31,8 +35,24 @@ export function renderSymbolSvg(
     : "";
 
   const echelonMark = def.echelon
-    ? `<text x="${cx}" y="${cy - h / 2 - 5}" text-anchor="middle" font-family="monospace" font-weight="700" font-size="${Math.max(9, size * 0.2)}" fill="${stroke}">${escapeXml(def.echelon)}</text>`
+    ? `<text x="${cx}" y="${cy - h / 2 - 2}" text-anchor="middle" font-family="monospace" font-weight="700" font-size="${Math.max(9, size * 0.2)}" fill="${stroke}">${escapeXml(def.echelon)}</text>`
     : "";
+
+  const effectiveCenterGlyph = opts.centerGlyph ?? def.centerGlyph;
+  if (effectiveCenterGlyph) {
+    const innerScale = (Math.min(w, h) * 0.62) / 32;
+    const igx = cx - 16 * innerScale;
+    const igy = cy - 16 * innerScale;
+    const shapeMarkup = renderShape(frame, cx, cy, w, h, stroke);
+    return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" overflow="visible">
+    ${selectionRing}
+    ${echelonMark}
+    ${shapeMarkup}
+    <g transform="translate(${igx},${igy}) scale(${innerScale})" color="${stroke}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+      ${effectiveCenterGlyph}
+    </g>
+  </svg>`;
+  }
 
   if (def.glyph) {
     const glyphScale = (size * 0.75) / 32;

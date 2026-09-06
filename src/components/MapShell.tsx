@@ -143,6 +143,15 @@ export default function MapShell() {
     [],
   );
 
+  const handleUpdateBranch = useCallback(
+    (updateUid: string, branchGlyphId: string | undefined) => {
+      setPlacements((prev) =>
+        prev.map((p) => (p.uid === updateUid ? { ...p, branchGlyphId } : p)),
+      );
+    },
+    [],
+  );
+
   const handlePick = useCallback((def: SymbolDef) => {
     setPendingSymbolId((current) => (current === def.id ? null : def.id));
   }, []);
@@ -165,6 +174,7 @@ export default function MapShell() {
           onDeleteSymbol={handleDeleteSymbol}
           onUpdateDesignation={handleUpdateDesignation}
           onUpdateAffiliation={handleUpdateAffiliation}
+          onUpdateBranch={handleUpdateBranch}
         />
 
         <div className="pointer-events-none absolute left-3 top-3 z-[1000] flex flex-col items-start gap-2">

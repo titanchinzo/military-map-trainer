@@ -24,8 +24,16 @@ function makeDivIcon(
   def: NonNullable<ReturnType<typeof getSymbol>>,
   selected: boolean,
   colorOverride?: AffiliationColor,
+  branchGlyphId?: string,
 ) {
-  const html = renderSymbolSvg(def, { size: MARKER_SIZE, colorOverride });
+  const centerGlyph = branchGlyphId
+    ? getSymbol(branchGlyphId)?.glyph
+    : undefined;
+  const html = renderSymbolSvg(def, {
+    size: MARKER_SIZE,
+    colorOverride,
+    centerGlyph,
+  });
   return L.divIcon({
     html,
     className: `mmt-marker${selected ? " mmt-marker-selected" : ""}`,
@@ -102,6 +110,7 @@ export default function MapCanvas({
   onDeleteSymbol,
   onUpdateDesignation,
   onUpdateAffiliation,
+  onUpdateBranch,
 }: {
   placements: PlacedSymbol[];
   pendingSymbolId?: string | null;
@@ -110,6 +119,7 @@ export default function MapCanvas({
   onDeleteSymbol: (uid: string) => void;
   onUpdateDesignation: (uid: string, designation: string) => void;
   onUpdateAffiliation: (uid: string, affiliation: AffiliationColor) => void;
+  onUpdateBranch: (uid: string, branchGlyphId: string | undefined) => void;
 }) {
   const markerRefs = useRef<Record<string, L.Marker>>({});
   const hoverTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
@@ -184,7 +194,12 @@ export default function MapCanvas({
           <Marker
             key={p.uid}
             position={[p.lat, p.lng]}
-            icon={makeDivIcon(def, p.uid === selectedUid, p.affiliation)}
+            icon={makeDivIcon(
+              def,
+              p.uid === selectedUid,
+              p.affiliation,
+              p.branchGlyphId,
+            )}
             draggable
             ref={(instance) => {
               if (instance) markerRefs.current[p.uid] = instance;
@@ -210,6 +225,9 @@ export default function MapCanvas({
                 }
                 onAffiliationChange={(color) =>
                   onUpdateAffiliation(p.uid, color)
+                }
+                onBranchChange={(branchGlyphId) =>
+                  onUpdateBranch(p.uid, branchGlyphId)
                 }
                 onDelete={() => onDeleteSymbol(p.uid)}
               />

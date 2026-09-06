@@ -73,6 +73,14 @@ export interface SymbolDef {
    * place of the frame+label rendering. See renderSymbol.ts.
    */
   glyph?: string;
+  /**
+   * Default branch-of-service glyph drawn inside this symbol's frame (in
+   * place of its text label) for unit boxes like "Батальон" — e.g. the
+   * infantry-fighting-vehicle glyph for "Бригад (явган цэргийн байлдааны
+   * машинтай)". A placement's `branchGlyphId` (see PlacedSymbol) overrides
+   * this per-instance. Raw SVG, same coordinate space as `glyph`.
+   */
+  centerGlyph?: string;
 }
 
 /** A symbol instance the trainee has dropped onto the map. */
@@ -86,6 +94,10 @@ export interface PlacedSymbol {
   /** Overrides the symbol definition's default color for this placement,
    * so e.g. the same unit icon can be dropped as either friendly or hostile. */
   affiliation?: AffiliationColor;
+  /** Id of a "Төрөл, мэргэжлийн цэрэг" (§2.4) SymbolDef whose glyph should be
+   * drawn inside this unit box, so e.g. a generic "Батальон" can be marked
+   * as specifically "Уулын" (mountain), "Танк" (tank), etc. */
+  branchGlyphId?: string;
   elevation?: number | null;
   elevationError?: string;
   createdAt: number;

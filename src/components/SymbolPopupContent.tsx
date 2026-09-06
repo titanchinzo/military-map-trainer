@@ -1,7 +1,7 @@
 "use client";
 
 import { AFFILIATION_HEX, AFFILIATION_LABEL } from "@/lib/colors";
-import { APPROXIMATION_NOTE } from "@/lib/symbols";
+import { APPROXIMATION_NOTE, SYMBOLS } from "@/lib/symbols";
 import type { AffiliationColor, PlacedSymbol, SymbolDef } from "@/types/symbol";
 
 const AFFILIATION_ORDER: AffiliationColor[] = [
@@ -15,17 +15,25 @@ const AFFILIATION_ORDER: AffiliationColor[] = [
   "black",
 ];
 
+// Branch-of-service glyphs (§2.4) a unit box (§2.2 "Анги, салбар") can be
+// marked with, so e.g. a generic "Батальон" can become "Уулын" (mountain).
+const BRANCH_OPTIONS = SYMBOLS.filter(
+  (s) => s.category === "Төрөл, мэргэжлийн цэрэг" && s.glyph,
+);
+
 export default function SymbolPopupContent({
   def,
   placement,
   onDesignationChange,
   onAffiliationChange,
+  onBranchChange,
   onDelete,
 }: {
   def: SymbolDef;
   placement: PlacedSymbol;
   onDesignationChange: (value: string) => void;
   onAffiliationChange: (color: AffiliationColor) => void;
+  onBranchChange: (branchGlyphId: string | undefined) => void;
   onDelete: () => void;
 }) {
   const currentColor = placement.affiliation ?? def.color;
@@ -66,6 +74,24 @@ export default function SymbolPopupContent({
           ))}
         </div>
       </div>
+
+      {def.category === "Анги, салбар" && (
+        <label className="block text-[11px] font-medium text-zinc-600">
+          Төрөл, мэргэжлийн цэрэг
+          <select
+            value={placement.branchGlyphId ?? ""}
+            onChange={(e) => onBranchChange(e.target.value || undefined)}
+            className="mt-1 w-full rounded border border-zinc-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
+          >
+            <option value="">(сонгоогүй)</option>
+            {BRANCH_OPTIONS.map((b) => (
+              <option key={b.id} value={b.id}>
+                {b.mn}
+              </option>
+            ))}
+          </select>
+        </label>
+      )}
 
       <dl className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-zinc-600">
         {def.echelon && (
