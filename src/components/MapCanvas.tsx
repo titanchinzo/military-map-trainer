@@ -9,7 +9,6 @@ import {
   Polyline,
   Polygon,
   CircleMarker,
-  ScaleControl,
   AttributionControl,
   useMap,
   useMapEvents,
@@ -51,6 +50,40 @@ function makeDivIcon(
     iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
     popupAnchor: [0, -MARKER_SIZE / 2],
   });
+}
+
+/** Shows the map's current scale as a "1:N" ratio (matching Т4-2022 §1.8's
+ * paper-map scale table) instead of Leaflet's default linear distance bar. */
+function RatioScaleControl() {
+  const map = useMap();
+
+  useEffect(() => {
+    const div = L.DomUtil.create("div", "leaflet-control leaflet-bar mmt-ratio-scale");
+    const control = new L.Control({ position: "bottomleft" });
+    control.onAdd = () => div;
+    control.addTo(map);
+
+    function update() {
+      const centerLat = map.getCenter().lat;
+      const zoom = map.getZoom();
+      const metersPerPixel =
+        (Math.cos((centerLat * Math.PI) / 180) * 2 * Math.PI * 6378137) /
+        (256 * Math.pow(2, zoom));
+      const dpi = 96;
+      const denominator = Math.round(metersPerPixel * (dpi / 0.0254));
+      div.textContent = `Масштаб 1:${denominator.toLocaleString("mn-MN")}`;
+    }
+    update();
+    map.on("zoomend", update);
+    map.on("moveend", update);
+    return () => {
+      map.off("zoomend", update);
+      map.off("moveend", update);
+      control.remove();
+    };
+  }, [map]);
+
+  return null;
 }
 
 /** Registers native drag/drop listeners on the Leaflet container so items
@@ -285,7 +318,7 @@ export default function MapCanvas({
         subdomains={["a", "b", "c"]}
       />
       <AttributionControl position="bottomright" prefix={false} />
-      <ScaleControl position="bottomleft" imperial={false} />
+      <RatioScaleControl />
       <DropHandler onDropSymbol={onDropSymbol} />
       <ClickToPlaceHandler
         pendingSymbolId={pendingSymbolId}
