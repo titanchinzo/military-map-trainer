@@ -9,6 +9,8 @@ import {
   Polyline,
   Polygon,
   CircleMarker,
+  ScaleControl,
+  AttributionControl,
   useMap,
   useMapEvents,
 } from "react-leaflet";
@@ -237,17 +239,29 @@ export default function MapCanvas({
     finishDraft,
   ]);
 
-  const handleMouseOver = useCallback((uid: string) => {
-    clearTimeout(hoverTimers.current[uid]);
-    hoverTimers.current[uid] = setTimeout(() => {
-      markerRefs.current[uid]?.openPopup();
-    }, HOVER_DELAY_MS);
-  }, []);
+  const handleMouseOver = useCallback(
+    (uid: string) => {
+      // Once a marker's popup is pinned open by a click (selectedUid), don't
+      // let hover timing fight with it — e.g. moving the mouse from the icon
+      // into the popup to use the color picker fires a mouseout/mouseover
+      // that used to close and then, after the delay, reopen it unprompted.
+      if (uid === selectedUid) return;
+      clearTimeout(hoverTimers.current[uid]);
+      hoverTimers.current[uid] = setTimeout(() => {
+        markerRefs.current[uid]?.openPopup();
+      }, HOVER_DELAY_MS);
+    },
+    [selectedUid],
+  );
 
-  const handleMouseOut = useCallback((uid: string) => {
-    clearTimeout(hoverTimers.current[uid]);
-    markerRefs.current[uid]?.closePopup();
-  }, []);
+  const handleMouseOut = useCallback(
+    (uid: string) => {
+      clearTimeout(hoverTimers.current[uid]);
+      if (uid === selectedUid) return;
+      markerRefs.current[uid]?.closePopup();
+    },
+    [selectedUid],
+  );
 
   useEffect(() => {
     const timers = hoverTimers.current;
@@ -262,13 +276,16 @@ export default function MapCanvas({
       zoom={DEFAULT_ZOOM}
       className={`h-full w-full ${pendingSymbolId || drawChoice ? "cursor-crosshair" : ""}`}
       preferCanvas
+      attributionControl={false}
     >
       <TileLayer
-        attribution='Тэмдэглэгээ &copy; <a href="https://tessadem.com">TessaDEM</a> · Зураг &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA) contributors &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> · &copy; <a href="https://opentopomap.org">OpenTopoMap</a>'
         url="https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png"
         maxZoom={17}
         subdomains={["a", "b", "c"]}
       />
+      <AttributionControl position="bottomright" prefix={false} />
+      <ScaleControl position="bottomleft" imperial={false} />
       <DropHandler onDropSymbol={onDropSymbol} />
       <ClickToPlaceHandler
         pendingSymbolId={pendingSymbolId}
@@ -305,6 +322,8 @@ export default function MapCanvas({
               click: () => setSelectedUid(p.uid),
               mouseover: () => handleMouseOver(p.uid),
               mouseout: () => handleMouseOut(p.uid),
+              popupclose: () =>
+                setSelectedUid((current) => (current === p.uid ? null : current)),
               dragend: (e) => {
                 const m = e.target as L.Marker;
                 const pos = m.getLatLng();

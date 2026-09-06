@@ -53,3 +53,12 @@ body {
   background: #1c1c1c;
 }
 
+/* Keep the (license-required) tile attribution, but make it small and
+   unobtrusive rather than a full-contrast text block. */
+.leaflet-control-attribution {
+  font-size: 9px;
+  padding: 1px 4px;
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 0.75;
+}
+

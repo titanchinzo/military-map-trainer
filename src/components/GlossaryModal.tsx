@@ -74,9 +74,16 @@ export default function GlossaryModal({
             <div key={entry.id}>
               <dt className="text-sm font-semibold text-zinc-100">
                 {entry.term}
+                {entry.source && (
+                  <span className="ml-2 text-[10px] font-normal text-zinc-500">
+                    {entry.source}
+                  </span>
+                )}
               </dt>
-              <dd className="mt-0.5 text-xs leading-relaxed text-zinc-400">
-                {entry.definition}
+              <dd className="mt-0.5 space-y-1.5 text-xs leading-relaxed text-zinc-400">
+                {entry.definition.split("\n\n").map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
               </dd>
             </div>
           ))}
