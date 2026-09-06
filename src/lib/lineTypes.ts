@@ -171,6 +171,42 @@ export const LINE_TYPES: LineTypeDef[] = [
     ref: "Т4-2022 §2.9 Хүснэгт 12",
     dashed: true,
   },
+  {
+    id: "stateBorder",
+    kind: "plainLine",
+    mn: "Улсын хил",
+    desc: "Улсын хилийн шугам.",
+    ref: "Т4-2022 Хавсралт 17",
+  },
+  {
+    id: "borderZone",
+    kind: "plainLine",
+    mn: "Хилийн бүс",
+    desc: "Хилийн бүсийн шугам.",
+    ref: "Т4-2022 Хавсралт 17",
+    dashed: true,
+  },
+  {
+    id: "protectiveZone1",
+    kind: "plainLine",
+    mn: "Хамгаалалтын I зааг, бүс",
+    desc: "Онцгой байдлын хамгаалалтын нэгдүгээр зааг, бүс.",
+    ref: "Т4-2022 §16.2/16.3",
+  },
+  {
+    id: "protectiveZone2",
+    kind: "plainLine",
+    mn: "Хамгаалалтын II зааг, бүс",
+    desc: "Онцгой байдлын хамгаалалтын хоёрдугаар зааг, бүс.",
+    ref: "Т4-2022 §16.2/16.3",
+  },
+  {
+    id: "protectiveZone3",
+    kind: "plainLine",
+    mn: "Хамгаалалтын III зааг, бүс",
+    desc: "Онцгой байдлын хамгаалалтын гуравдугаар зааг, бүс.",
+    ref: "Т4-2022 §16.2/16.3",
+  },
 ];
 
 export function getLineType(id: string): LineTypeDef | undefined {
