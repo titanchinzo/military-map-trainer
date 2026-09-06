@@ -74,6 +74,9 @@ export interface PlacedSymbol {
   lng: number;
   /** Optional unit/harьяаллын dугаар the trainee can label the marker with. */
   designation?: string;
+  /** Overrides the symbol definition's default color for this placement,
+   * so e.g. the same unit icon can be dropped as either friendly or hostile. */
+  affiliation?: AffiliationColor;
   elevation?: number | null;
   elevationError?: string;
   createdAt: number;

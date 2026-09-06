@@ -1,20 +1,34 @@
 "use client";
 
-import { AFFILIATION_LABEL } from "@/lib/colors";
+import { AFFILIATION_HEX, AFFILIATION_LABEL } from "@/lib/colors";
 import { APPROXIMATION_NOTE } from "@/lib/symbols";
-import type { PlacedSymbol, SymbolDef } from "@/types/symbol";
+import type { AffiliationColor, PlacedSymbol, SymbolDef } from "@/types/symbol";
+
+const AFFILIATION_ORDER: AffiliationColor[] = [
+  "friendly",
+  "hostile",
+  "green",
+  "brown",
+  "tan",
+  "yellow",
+  "orange",
+  "black",
+];
 
 export default function SymbolPopupContent({
   def,
   placement,
   onDesignationChange,
+  onAffiliationChange,
   onDelete,
 }: {
   def: SymbolDef;
   placement: PlacedSymbol;
   onDesignationChange: (value: string) => void;
+  onAffiliationChange: (color: AffiliationColor) => void;
   onDelete: () => void;
 }) {
+  const currentColor = placement.affiliation ?? def.color;
   return (
     <div className="w-64 space-y-2 text-zinc-900">
       <div>
@@ -30,9 +44,30 @@ export default function SymbolPopupContent({
         </p>
       )}
 
+      <div>
+        <p className="mb-1 text-[11px] font-medium text-zinc-600">
+          Харьяалал: {AFFILIATION_LABEL[currentColor]}
+        </p>
+        <div className="flex flex-wrap gap-1.5">
+          {AFFILIATION_ORDER.map((color) => (
+            <button
+              key={color}
+              type="button"
+              title={AFFILIATION_LABEL[color]}
+              aria-label={AFFILIATION_LABEL[color]}
+              onClick={() => onAffiliationChange(color)}
+              className={`h-5 w-5 rounded-full border-2 ${
+                color === currentColor
+                  ? "border-zinc-900 ring-2 ring-offset-1 ring-zinc-400"
+                  : "border-white"
+              }`}
+              style={{ backgroundColor: AFFILIATION_HEX[color] }}
+            />
+          ))}
+        </div>
+      </div>
+
       <dl className="grid grid-cols-2 gap-x-2 gap-y-1 text-[11px] text-zinc-600">
-        <dt className="font-medium">Харьяалал</dt>
-        <dd>{AFFILIATION_LABEL[def.color]}</dd>
         {def.echelon && (
           <>
             <dt className="font-medium">Шатлал</dt>

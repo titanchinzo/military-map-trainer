@@ -10,7 +10,7 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import L from "leaflet";
-import type { PlacedSymbol } from "@/types/symbol";
+import type { AffiliationColor, PlacedSymbol } from "@/types/symbol";
 import { getSymbol } from "@/lib/symbols";
 import { renderSymbolSvg } from "@/lib/renderSymbol";
 import SymbolPopupContent from "@/components/SymbolPopupContent";
@@ -23,8 +23,9 @@ const HOVER_DELAY_MS = 2200;
 function makeDivIcon(
   def: NonNullable<ReturnType<typeof getSymbol>>,
   selected: boolean,
+  colorOverride?: AffiliationColor,
 ) {
-  const html = renderSymbolSvg(def, { size: MARKER_SIZE });
+  const html = renderSymbolSvg(def, { size: MARKER_SIZE, colorOverride });
   return L.divIcon({
     html,
     className: `mmt-marker${selected ? " mmt-marker-selected" : ""}`,
@@ -100,6 +101,7 @@ export default function MapCanvas({
   onMoveSymbol,
   onDeleteSymbol,
   onUpdateDesignation,
+  onUpdateAffiliation,
 }: {
   placements: PlacedSymbol[];
   pendingSymbolId?: string | null;
@@ -107,6 +109,7 @@ export default function MapCanvas({
   onMoveSymbol: (uid: string, lat: number, lng: number) => void;
   onDeleteSymbol: (uid: string) => void;
   onUpdateDesignation: (uid: string, designation: string) => void;
+  onUpdateAffiliation: (uid: string, affiliation: AffiliationColor) => void;
 }) {
   const markerRefs = useRef<Record<string, L.Marker>>({});
   const hoverTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>(
@@ -181,7 +184,7 @@ export default function MapCanvas({
           <Marker
             key={p.uid}
             position={[p.lat, p.lng]}
-            icon={makeDivIcon(def, p.uid === selectedUid)}
+            icon={makeDivIcon(def, p.uid === selectedUid, p.affiliation)}
             draggable
             ref={(instance) => {
               if (instance) markerRefs.current[p.uid] = instance;
@@ -204,6 +207,9 @@ export default function MapCanvas({
                 placement={p}
                 onDesignationChange={(value) =>
                   onUpdateDesignation(p.uid, value)
+                }
+                onAffiliationChange={(color) =>
+                  onUpdateAffiliation(p.uid, color)
                 }
                 onDelete={() => onDeleteSymbol(p.uid)}
               />

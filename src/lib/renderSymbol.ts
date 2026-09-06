@@ -1,4 +1,4 @@
-import type { SymbolDef } from "@/types/symbol";
+import type { AffiliationColor, SymbolDef } from "@/types/symbol";
 import { AFFILIATION_HEX } from "@/lib/colors";
 
 /**
@@ -8,11 +8,16 @@ import { AFFILIATION_HEX } from "@/lib/colors";
  */
 export function renderSymbolSvg(
   def: SymbolDef,
-  opts: { size?: number; selected?: boolean } = {},
+  opts: {
+    size?: number;
+    selected?: boolean;
+    colorOverride?: AffiliationColor;
+  } = {},
 ): string {
   const size = opts.size ?? 48;
-  const stroke = AFFILIATION_HEX[def.color];
-  const isHostile = def.color === "hostile";
+  const color = opts.colorOverride ?? def.color;
+  const stroke = AFFILIATION_HEX[color];
+  const isHostile = color === "hostile";
   const frame = isHostile && isUnitFrame(def.frame) ? "hexagon" : def.frame;
 
   const cx = size / 2;

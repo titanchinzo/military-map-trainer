@@ -7,7 +7,7 @@ import SymbolPalette from "@/components/SymbolPalette";
 import GlossaryModal from "@/components/GlossaryModal";
 import { loadPlacements, savePlacements } from "@/lib/storage";
 import { getSymbol } from "@/lib/symbols";
-import type { PlacedSymbol, SymbolDef } from "@/types/symbol";
+import type { AffiliationColor, PlacedSymbol, SymbolDef } from "@/types/symbol";
 
 const MapCanvas = dynamic(() => import("@/components/MapCanvas"), {
   ssr: false,
@@ -134,6 +134,15 @@ export default function MapShell() {
     [],
   );
 
+  const handleUpdateAffiliation = useCallback(
+    (updateUid: string, affiliation: AffiliationColor) => {
+      setPlacements((prev) =>
+        prev.map((p) => (p.uid === updateUid ? { ...p, affiliation } : p)),
+      );
+    },
+    [],
+  );
+
   const handlePick = useCallback((def: SymbolDef) => {
     setPendingSymbolId((current) => (current === def.id ? null : def.id));
   }, []);
@@ -155,6 +164,7 @@ export default function MapShell() {
           onMoveSymbol={handleMoveSymbol}
           onDeleteSymbol={handleDeleteSymbol}
           onUpdateDesignation={handleUpdateDesignation}
+          onUpdateAffiliation={handleUpdateAffiliation}
         />
 
         <div className="pointer-events-none absolute left-3 top-3 z-[1000] flex flex-col items-start gap-2">
