@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -34,6 +34,7 @@ function makeDivIcon(
   selected: boolean,
   colorOverride?: AffiliationColor,
   branchGlyphId?: string,
+  designation?: string,
 ) {
   const centerGlyph = branchGlyphId
     ? getSymbol(branchGlyphId)?.glyph
@@ -42,6 +43,7 @@ function makeDivIcon(
     size: MARKER_SIZE,
     colorOverride,
     centerGlyph,
+    designation,
   });
   return L.divIcon({
     html,
@@ -196,6 +198,28 @@ export default function MapCanvas({
     null,
   );
 
+  // Rebuild a marker's Leaflet icon only when something it draws actually
+  // changes. Without this, every keystroke in the designation field would
+  // call setIcon() on every marker on the map.
+  const iconCache = useMemo(() => {
+    const cache = new Map<string, L.DivIcon>();
+    for (const p of placements) {
+      const def = getSymbol(p.symbolId);
+      if (!def) continue;
+      cache.set(
+        p.uid,
+        makeDivIcon(
+          def,
+          p.uid === selectedUid,
+          p.affiliation,
+          p.branchGlyphId,
+          p.designation,
+        ),
+      );
+    }
+    return cache;
+  }, [placements, selectedUid]);
+
   // "Adjusting state during render" instead of setState-in-an-effect: reset
   // the in-progress draft whenever draw mode is turned off/changed.
   if (drawChoice !== draftForChoice) {
@@ -340,12 +364,7 @@ export default function MapCanvas({
           <Marker
             key={p.uid}
             position={[p.lat, p.lng]}
-            icon={makeDivIcon(
-              def,
-              p.uid === selectedUid,
-              p.affiliation,
-              p.branchGlyphId,
-            )}
+            icon={iconCache.get(p.uid)!}
             draggable
             ref={(instance) => {
               if (instance) markerRefs.current[p.uid] = instance;

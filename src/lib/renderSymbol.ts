@@ -16,6 +16,10 @@ export function renderSymbolSvg(
      * this symbol's frame in place of its text label — lets a generic unit
      * box (e.g. "Батальон") be marked as a specific branch (e.g. "Уулын"). */
     centerGlyph?: string;
+    /** Харьяаллын дугаар / нэр (§1.6). Written alongside the symbol's lower
+     * line, in black, per §1.2's "Г" element. Map markers pass this; palette
+     * thumbnails leave it out. */
+    designation?: string;
   } = {},
 ): string {
   const size = opts.size ?? 48;
@@ -38,6 +42,14 @@ export function renderSymbolSvg(
     ? `<text x="${cx}" y="${cy - h / 2 - 2}" text-anchor="middle" font-family="monospace" font-weight="700" font-size="${Math.max(9, size * 0.2)}" fill="${stroke}">${escapeXml(def.echelon)}</text>`
     : "";
 
+  // §1.6.2 — the unit's designation goes along the symbol's lower line, on the
+  // side opposite the direction of operations, and §1.2 fixes its colour as
+  // black regardless of the symbol's own affiliation colour.
+  const designation = opts.designation?.trim();
+  const designationMarkup = designation
+    ? `<text x="${cx + w / 2 + 3}" y="${cy + h / 2}" text-anchor="start" dominant-baseline="middle" font-family="Arial, sans-serif" font-weight="700" font-size="${Math.max(9, size * 0.24)}" fill="#111111" style="paint-order: stroke; stroke: white; stroke-width: 3px;">${escapeXml(designation)}</text>`
+    : "";
+
   const effectiveCenterGlyph = opts.centerGlyph ?? def.centerGlyph;
   if (effectiveCenterGlyph) {
     const innerScale = (Math.min(w, h) * 0.62) / 32;
@@ -51,6 +63,7 @@ export function renderSymbolSvg(
     <g transform="translate(${igx},${igy}) scale(${innerScale})" color="${stroke}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
       ${effectiveCenterGlyph}
     </g>
+    ${designationMarkup}
   </svg>`;
   }
 
@@ -64,6 +77,7 @@ export function renderSymbolSvg(
     <g transform="translate(${gx},${gy}) scale(${glyphScale})" color="${stroke}" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
       ${def.glyph}
     </g>
+    ${designationMarkup}
   </svg>`;
   }
 
@@ -76,6 +90,7 @@ export function renderSymbolSvg(
     ${echelonMark}
     ${shapeMarkup}
     ${labelMarkup}
+    ${designationMarkup}
   </svg>`;
 }
 

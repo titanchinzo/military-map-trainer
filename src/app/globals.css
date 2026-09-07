@@ -31,6 +31,9 @@ body {
 .mmt-marker {
   background: transparent !important;
   border: none !important;
+  /* The designation text (§1.6) is drawn outside the icon's nominal box, so
+     the wrapper must not clip it. */
+  overflow: visible;
 }
 
 .mmt-marker svg {

@@ -119,14 +119,17 @@ export default function SymbolPopupContent({
       </dl>
 
       <label className="block text-[11px] font-medium text-zinc-600">
-        Харьяаллын дугаар / тэмдэглэл
+        Нэр / харьяаллын дугаар
         <input
           type="text"
           defaultValue={placement.designation ?? ""}
           onChange={(e) => onDesignationChange(e.target.value)}
-          placeholder="жиш: 1МБР"
+          placeholder="жиш: 1-р салаа, 2МБР, УБ-1"
           className="mt-1 w-full rounded border border-zinc-300 px-2 py-1 text-xs focus:border-blue-500 focus:outline-none"
         />
+        <span className="mt-0.5 block text-[10px] font-normal text-zinc-400">
+          Т4-2022 §1.6 — тэмдгийн доод шугамын дагуу хар өнгөөр бичигдэнэ.
+        </span>
       </label>
 
       <button
