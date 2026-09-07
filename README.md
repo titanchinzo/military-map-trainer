@@ -37,9 +37,22 @@ requests at https://tessadem.com/dashboard; the UI degrades gracefully
 - **`src/proxy.ts`** — Next.js 16 renamed `middleware.ts` → `proxy.ts`. Wraps
   Clerk's `clerkMiddleware`; every route except `/`, `/sign-in`, `/sign-up`
   requires a session.
-- **`src/lib/symbols.ts`** — ~150 `SymbolDef` entries transcribed from
-  *"Цэргийн тактикийн таних тэмдэг, тэмдэглэгээг хэрэглэх заавар Т4‑2022"*,
-  grouped into the categories you see in the sidebar.
+- **`src/lib/symbols.ts`** — ~560 `SymbolDef` entries transcribed from all 82
+  pages of *"Цэргийн тактикийн таних тэмдэг, тэмдэглэгээг хэрэглэх заавар
+  Т4‑2022"*. `CATEGORIES` follows the manual's own table of contents in order
+  — §2.1–§2.10, then appendices 1–13 with their sub-items — so a palette
+  section maps 1:1 onto a section of the book. Note that the printed body
+  numbers its appendices in a *different* order than the contents page lists
+  them (Холбоо is printed as Хавсралт 5 but listed 7th; ЦХБ is printed as 9
+  but listed 5th); each entry's `ref` cites the number printed on the page it
+  came from, while its category follows the contents-page order.
+  Орон нутгийн цэрэг (contents item 12) has a single entry because the manual
+  ships no appendix table for it — page 71 goes straight from Барилга to
+  Хэмжил зүй.
+- **`src/lib/lineTypes.ts`** — 58 `LineTypeDef` entries for §2.8 boundary
+  lines, §2.9 areas / mission lines / recon and deployment lines, and the
+  Хавсралт 17 border-troop boundaries. These are drawn on the map rather than
+  dropped as markers.
 - **`src/lib/renderSymbol.ts`** — draws a symbol as SVG from its frame shape
   (§1.5), echelon mark (§1.4), and affiliation color (§1.7, exact RGB values
   from the manual's table). Used both for palette thumbnails and Leaflet
