@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider, Show, SignInButton, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
+import { getRole } from "@/lib/roles";
 import "leaflet/dist/leaflet.css";
 import "./globals.css";
 
@@ -21,7 +22,9 @@ export const metadata: Metadata = {
     "Байлдааны газрын зураг дээр цэргийн тактикийн таних тэмдэг байрлуулах сургалтын хэрэгсэл",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  // Хэрэглэгчийн эрхээс хамааран толгойн цэсийг өөрчилнө.
+  const role = await getRole();
   return (
     <ClerkProvider afterSignOutUrl="/">
       <html
@@ -46,6 +49,22 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 >
                   Газрын зураг
                 </Link>
+                {(role === "teacher" || role === "admin") && (
+                  <Link
+                    href="/teacher"
+                    className="rounded-md px-3 py-1.5 text-sm font-medium text-zinc-200 hover:bg-zinc-800"
+                  >
+                    Багшийн самбар
+                  </Link>
+                )}
+                {role === "admin" && (
+                  <Link
+                    href="/admin"
+                    className="rounded-md px-3 py-1.5 text-sm font-medium text-purple-300 hover:bg-zinc-800"
+                  >
+                    Админ
+                  </Link>
+                )}
                 <UserButton />
               </Show>
               <Show when="signed-out">

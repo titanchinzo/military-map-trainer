@@ -16,17 +16,17 @@ import {
 import L from "leaflet";
 import type { AffiliationColor, PlacedSymbol } from "@/types/symbol";
 import type { PlacedLine } from "@/types/line";
+import type { BoardView } from "@/types/db";
 import { getSymbol } from "@/lib/symbols";
 import { getLineType } from "@/lib/lineTypes";
 import { AFFILIATION_HEX } from "@/lib/colors";
-import { renderSymbolSvg } from "@/lib/renderSymbol";
+import { renderSymbol } from "@/lib/renderSymbol";
 import SymbolPopupContent from "@/components/SymbolPopupContent";
 import LinePopupContent from "@/components/LinePopupContent";
 import type { LineDrawChoice } from "@/components/LineDrawPanel";
 
 export const DEFAULT_CENTER: [number, number] = [47.79185, 91.78977];
 export const DEFAULT_ZOOM = 16;
-const MARKER_SIZE = 44;
 const HOVER_DELAY_MS = 2200;
 
 function makeDivIcon(
@@ -39,18 +39,16 @@ function makeDivIcon(
   const centerGlyph = branchGlyphId
     ? getSymbol(branchGlyphId)?.glyph
     : undefined;
-  const html = renderSymbolSvg(def, {
-    size: MARKER_SIZE,
-    colorOverride,
-    centerGlyph,
-    designation,
-  });
+  // Size and anchor come from the symbol itself: a battalion box is wider
+  // than a company box (§1.8), and a command-post flag is anchored at the
+  // foot of its staff rather than at the frame's centre.
+  const r = renderSymbol(def, { colorOverride, centerGlyph, designation });
   return L.divIcon({
-    html,
+    html: r.svg,
     className: `mmt-marker${selected ? " mmt-marker-selected" : ""}`,
-    iconSize: [MARKER_SIZE, MARKER_SIZE],
-    iconAnchor: [MARKER_SIZE / 2, MARKER_SIZE / 2],
-    popupAnchor: [0, -MARKER_SIZE / 2],
+    iconSize: [r.width, r.height],
+    iconAnchor: [r.anchorX, r.anchorY],
+    popupAnchor: [r.width / 2 - r.anchorX, -r.anchorY],
   });
 }
 
@@ -84,6 +82,48 @@ function RatioScaleControl() {
       control.remove();
     };
   }, [map]);
+
+  return null;
+}
+
+/**
+ * Газрын зургийн харагдацыг (төв + zoom) хоёр чиглэлд холбоно: эзэмшигчийнхийг
+ * дээш дамжуулж хадгалуулах, «багшийг дагах» горимд алсын утгаар шилжүүлэх.
+ */
+function ViewSync({
+  remoteView,
+  onViewChange,
+}: {
+  remoteView?: BoardView | null;
+  onViewChange?: (view: BoardView) => void;
+}) {
+  const map = useMap();
+  // Алсын шилжилтийг өөрийн хөдөлгөөн гэж ойлгож буцааж илгээхээс сэргийлнэ.
+  const applyingRemote = useRef(false);
+
+  useMapEvents({
+    moveend() {
+      if (applyingRemote.current || !onViewChange) return;
+      const c = map.getCenter();
+      onViewChange({ lat: c.lat, lng: c.lng, zoom: map.getZoom() });
+    },
+  });
+
+  useEffect(() => {
+    if (!remoteView) return;
+    const c = map.getCenter();
+    const same =
+      Math.abs(c.lat - remoteView.lat) < 1e-6 &&
+      Math.abs(c.lng - remoteView.lng) < 1e-6 &&
+      map.getZoom() === remoteView.zoom;
+    if (same) return;
+    applyingRemote.current = true;
+    map.setView([remoteView.lat, remoteView.lng], remoteView.zoom, { animate: true });
+    const t = setTimeout(() => {
+      applyingRemote.current = false;
+    }, 600);
+    return () => clearTimeout(t);
+  }, [map, remoteView]);
 
   return null;
 }
@@ -154,19 +194,101 @@ function ClickToPlaceHandler({
   return null;
 }
 
+/**
+ * One placed symbol. Split into its own component so each marker's Leaflet
+ * icon is memoised on just the fields that affect its SVG. `placements` is a
+ * fresh array on every edit, so a single useMemo over the whole array rebuilt
+ * — and setIcon()'d — every marker on the map whenever anything changed: a
+ * keystroke in one designation field, or an elevation response arriving for an
+ * unrelated marker.
+ */
+function SymbolMarker({
+  placement,
+  def,
+  selected,
+  readOnly,
+  registerMarker,
+  onSelect,
+  onPopupClose,
+  onHoverIn,
+  onHoverOut,
+  onMoveSymbol,
+  onUpdateDesignation,
+  onUpdateAffiliation,
+  onUpdateBranch,
+  onDeleteSymbol,
+}: {
+  placement: PlacedSymbol;
+  def: NonNullable<ReturnType<typeof getSymbol>>;
+  selected: boolean;
+  readOnly: boolean;
+  registerMarker: (uid: string, marker: L.Marker | null) => void;
+  onSelect: (uid: string) => void;
+  onPopupClose: (uid: string) => void;
+  onHoverIn: (uid: string) => void;
+  onHoverOut: (uid: string) => void;
+  onMoveSymbol: (uid: string, lat: number, lng: number) => void;
+  onUpdateDesignation: (uid: string, designation: string) => void;
+  onUpdateAffiliation: (uid: string, affiliation: AffiliationColor) => void;
+  onUpdateBranch: (uid: string, branchGlyphId: string | undefined) => void;
+  onDeleteSymbol: (uid: string) => void;
+}) {
+  const { uid, lat, lng, affiliation, branchGlyphId, designation } = placement;
+
+  const icon = useMemo(
+    () => makeDivIcon(def, selected, affiliation, branchGlyphId, designation),
+    [def, selected, affiliation, branchGlyphId, designation],
+  );
+
+  return (
+    <Marker
+      position={[lat, lng]}
+      icon={icon}
+      draggable={!readOnly}
+      ref={(instance) => registerMarker(uid, instance)}
+      eventHandlers={{
+        click: () => onSelect(uid),
+        mouseover: () => onHoverIn(uid),
+        mouseout: () => onHoverOut(uid),
+        popupclose: () => onPopupClose(uid),
+        dragend: (e) => {
+          const pos = (e.target as L.Marker).getLatLng();
+          onMoveSymbol(uid, pos.lat, pos.lng);
+        },
+      }}
+    >
+      <Popup autoPan={false} closeButton>
+        <SymbolPopupContent
+          def={def}
+          placement={placement}
+          readOnly={readOnly}
+          onDesignationChange={(value) => onUpdateDesignation(uid, value)}
+          onAffiliationChange={(color) => onUpdateAffiliation(uid, color)}
+          onBranchChange={(branchId) => onUpdateBranch(uid, branchId)}
+          onDelete={() => onDeleteSymbol(uid)}
+        />
+      </Popup>
+    </Marker>
+  );
+}
+
 export default function MapCanvas({
   placements,
   lines,
   pendingSymbolId = null,
   drawChoice = null,
-  finishRequestId = 0,
+  draftPoints,
+  readOnly = false,
+  remoteView = null,
+  onViewChange,
   onDropSymbol,
   onMoveSymbol,
   onDeleteSymbol,
   onUpdateDesignation,
   onUpdateAffiliation,
   onUpdateBranch,
-  onFinishLine,
+  onAddDraftPoint,
+  onFinishDraw,
   onCancelDraw,
   onDeleteLine,
   onUpdateLineAffiliation,
@@ -175,14 +297,22 @@ export default function MapCanvas({
   lines: PlacedLine[];
   pendingSymbolId?: string | null;
   drawChoice?: LineDrawChoice | null;
-  finishRequestId?: number;
+  /** Vertices of the shape currently being drawn. Owned by MapShell so its
+   * "Дуусгах" button can show the count and refuse an incomplete shape. */
+  draftPoints: [number, number][];
+  /** Зөвхөн харах — хичээлийн дэлгэц, сурагчийн ажлыг хянахад. */
+  readOnly?: boolean;
+  /** Дагах ёстой алсын харагдац (багшийн зураг). */
+  remoteView?: BoardView | null;
+  onViewChange?: (view: BoardView) => void;
   onDropSymbol: (symbolId: string, lat: number, lng: number) => void;
   onMoveSymbol: (uid: string, lat: number, lng: number) => void;
   onDeleteSymbol: (uid: string) => void;
   onUpdateDesignation: (uid: string, designation: string) => void;
   onUpdateAffiliation: (uid: string, affiliation: AffiliationColor) => void;
   onUpdateBranch: (uid: string, branchGlyphId: string | undefined) => void;
-  onFinishLine: (points: [number, number][]) => void;
+  onAddDraftPoint: (lat: number, lng: number) => void;
+  onFinishDraw: () => void;
   onCancelDraw: () => void;
   onDeleteLine: (uid: string) => void;
   onUpdateLineAffiliation: (uid: string, affiliation: AffiliationColor) => void;
@@ -193,63 +323,17 @@ export default function MapCanvas({
   );
   const [selectedUid, setSelectedUid] = useState<string | null>(null);
   const [selectedLineUid, setSelectedLineUid] = useState<string | null>(null);
-  const [draftPoints, setDraftPoints] = useState<[number, number][]>([]);
-  const [draftForChoice, setDraftForChoice] = useState<LineDrawChoice | null>(
-    null,
-  );
 
-  // Rebuild a marker's Leaflet icon only when something it draws actually
-  // changes. Without this, every keystroke in the designation field would
-  // call setIcon() on every marker on the map.
-  const iconCache = useMemo(() => {
-    const cache = new Map<string, L.DivIcon>();
-    for (const p of placements) {
-      const def = getSymbol(p.symbolId);
-      if (!def) continue;
-      cache.set(
-        p.uid,
-        makeDivIcon(
-          def,
-          p.uid === selectedUid,
-          p.affiliation,
-          p.branchGlyphId,
-          p.designation,
-        ),
-      );
-    }
-    return cache;
-  }, [placements, selectedUid]);
-
-  // "Adjusting state during render" instead of setState-in-an-effect: reset
-  // the in-progress draft whenever draw mode is turned off/changed.
-  if (drawChoice !== draftForChoice) {
-    setDraftForChoice(drawChoice);
-    setDraftPoints([]);
-  }
-
-  const minPoints = drawChoice
-    ? getLineType(drawChoice.typeId)?.kind === "area"
-      ? 3
-      : 2
-    : 0;
-
-  const finishDraft = useCallback(() => {
-    if (draftPoints.length < minPoints) return;
-    onFinishLine(draftPoints);
-    setDraftPoints([]);
-  }, [draftPoints, minPoints, onFinishLine]);
-
-  // "Дуусгах" button in MapShell lives outside this component (draftPoints
-  // is local state here), so it signals us via an incrementing id instead.
-  const isFirstFinishSignal = useRef(true);
+  // A deleted marker's pending hover timer would otherwise stay in the record
+  // until the whole map unmounts, firing openPopup() on a gone marker.
   useEffect(() => {
-    if (isFirstFinishSignal.current) {
-      isFirstFinishSignal.current = false;
-      return;
+    const live = new Set(placements.map((p) => p.uid));
+    for (const [uid, timer] of Object.entries(hoverTimers.current)) {
+      if (live.has(uid)) continue;
+      clearTimeout(timer);
+      delete hoverTimers.current[uid];
     }
-    finishDraft();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [finishRequestId]);
+  }, [placements]);
 
   // Lets a selected symbol/line be removed with Delete/Backspace, and an
   // in-progress line draft be cancelled (Esc) or finished (Enter).
@@ -261,7 +345,7 @@ export default function MapCanvas({
         (target.tagName === "INPUT" ||
           target.tagName === "TEXTAREA" ||
           target.isContentEditable);
-      if (isEditingText) return;
+      if (isEditingText || readOnly) return;
 
       if (drawChoice) {
         if (e.key === "Escape") {
@@ -269,7 +353,7 @@ export default function MapCanvas({
           onCancelDraw();
         } else if (e.key === "Enter") {
           e.preventDefault();
-          finishDraft();
+          onFinishDraw();
         }
         return;
       }
@@ -293,7 +377,8 @@ export default function MapCanvas({
     onDeleteLine,
     drawChoice,
     onCancelDraw,
-    finishDraft,
+    onFinishDraw,
+    readOnly,
   ]);
 
   const handleMouseOver = useCallback(
@@ -310,6 +395,15 @@ export default function MapCanvas({
     },
     [selectedUid],
   );
+
+  const registerMarker = useCallback((uid: string, marker: L.Marker | null) => {
+    if (marker) markerRefs.current[uid] = marker;
+    else delete markerRefs.current[uid];
+  }, []);
+
+  const handlePopupClose = useCallback((uid: string) => {
+    setSelectedUid((current) => (current === uid ? null : current));
+  }, []);
 
   const handleMouseOut = useCallback(
     (uid: string) => {
@@ -343,14 +437,13 @@ export default function MapCanvas({
       />
       <AttributionControl position="bottomright" prefix={false} />
       <RatioScaleControl />
-      <DropHandler onDropSymbol={onDropSymbol} />
+      <ViewSync remoteView={remoteView} onViewChange={onViewChange} />
+      {!readOnly && <DropHandler onDropSymbol={onDropSymbol} />}
       <ClickToPlaceHandler
         pendingSymbolId={pendingSymbolId}
         drawChoice={drawChoice}
         onPlace={onDropSymbol}
-        onAddPoint={(lat, lng) =>
-          setDraftPoints((prev) => [...prev, [lat, lng]])
-        }
+        onAddPoint={onAddDraftPoint}
         onDeselect={() => {
           setSelectedUid(null);
           setSelectedLineUid(null);
@@ -361,45 +454,23 @@ export default function MapCanvas({
         const def = getSymbol(p.symbolId);
         if (!def) return null;
         return (
-          <Marker
+          <SymbolMarker
             key={p.uid}
-            position={[p.lat, p.lng]}
-            icon={iconCache.get(p.uid)!}
-            draggable
-            ref={(instance) => {
-              if (instance) markerRefs.current[p.uid] = instance;
-              else delete markerRefs.current[p.uid];
-            }}
-            eventHandlers={{
-              click: () => setSelectedUid(p.uid),
-              mouseover: () => handleMouseOver(p.uid),
-              mouseout: () => handleMouseOut(p.uid),
-              popupclose: () =>
-                setSelectedUid((current) => (current === p.uid ? null : current)),
-              dragend: (e) => {
-                const m = e.target as L.Marker;
-                const pos = m.getLatLng();
-                onMoveSymbol(p.uid, pos.lat, pos.lng);
-              },
-            }}
-          >
-            <Popup autoPan={false} closeButton>
-              <SymbolPopupContent
-                def={def}
-                placement={p}
-                onDesignationChange={(value) =>
-                  onUpdateDesignation(p.uid, value)
-                }
-                onAffiliationChange={(color) =>
-                  onUpdateAffiliation(p.uid, color)
-                }
-                onBranchChange={(branchGlyphId) =>
-                  onUpdateBranch(p.uid, branchGlyphId)
-                }
-                onDelete={() => onDeleteSymbol(p.uid)}
-              />
-            </Popup>
-          </Marker>
+            placement={p}
+            def={def}
+            selected={p.uid === selectedUid}
+            readOnly={readOnly}
+            registerMarker={registerMarker}
+            onSelect={setSelectedUid}
+            onPopupClose={handlePopupClose}
+            onHoverIn={handleMouseOver}
+            onHoverOut={handleMouseOut}
+            onMoveSymbol={onMoveSymbol}
+            onUpdateDesignation={onUpdateDesignation}
+            onUpdateAffiliation={onUpdateAffiliation}
+            onUpdateBranch={onUpdateBranch}
+            onDeleteSymbol={onDeleteSymbol}
+          />
         );
       })}
 
@@ -420,6 +491,7 @@ export default function MapCanvas({
             <LinePopupContent
               type={type}
               line={l}
+              readOnly={readOnly}
               onAffiliationChange={(color) =>
                 onUpdateLineAffiliation(l.uid, color)
               }

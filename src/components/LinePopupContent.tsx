@@ -20,11 +20,14 @@ export default function LinePopupContent({
   line,
   onAffiliationChange,
   onDelete,
+  readOnly = false,
 }: {
   type: LineTypeDef;
   line: PlacedLine;
   onAffiliationChange: (color: AffiliationColor) => void;
   onDelete: () => void;
+  /** Бусдын зургийг үзэж байгаа үед засварын хэсгүүдийг нууна. */
+  readOnly?: boolean;
 }) {
   const currentColor = line.affiliation ?? "friendly";
   return (
@@ -43,7 +46,7 @@ export default function LinePopupContent({
         <p className="mb-1 text-[11px] font-medium text-zinc-600">
           Харьяалал: {AFFILIATION_LABEL[currentColor]}
         </p>
-        <div className="flex flex-wrap gap-1.5">
+        <div className={`flex flex-wrap gap-1.5 ${readOnly ? "hidden" : ""}`}>
           {AFFILIATION_ORDER.map((color) => (
             <button
               key={color}
@@ -66,13 +69,15 @@ export default function LinePopupContent({
         Цэгийн тоо: {line.points.length}
       </p>
 
-      <button
-        type="button"
-        onClick={onDelete}
-        className="w-full rounded bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
-      >
-        Устгах
-      </button>
+      {!readOnly && (
+        <button
+          type="button"
+          onClick={onDelete}
+          className="w-full rounded bg-red-50 px-2 py-1.5 text-xs font-semibold text-red-700 hover:bg-red-100"
+        >
+          Устгах
+        </button>
+      )}
     </div>
   );
 }

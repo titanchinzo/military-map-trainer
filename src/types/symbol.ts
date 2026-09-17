@@ -8,13 +8,13 @@
  * the manual shows a hand-drawn pictorial glyph that isn't recoverable from
  * the PDF's text layer (most branch-of-service / weapon icons in Ch.2 and
  * the appendices), a short Mongolian abbreviation stands in for it inside the
- * correctly-shaped, correctly-colored, correctly-echeloned frame — see
- * `glyph === "text"`. Those are marked `approximate: true` and say so in the
- * tooltip, so the tool never presents an invented glyph as authoritative.
+ * correctly-shaped, correctly-colored, correctly-echeloned frame: such an
+ * entry carries no `glyph`, is marked `approximate: true`, and says so in its
+ * popup, so the tool never presents an invented glyph as authoritative.
  */
 
 export type FrameShape =
-  | "rect" // тэгш өнцөгт — udирдлага/анги/салбар
+  | "rect" // тэгш өнцөгт — удирдлага/анги/салбар
   | "square" // дөрвөлжин — бааз, агуулах, объект
   | "triangle" // адил хажуут гурвалжин — хяналт/хангалтын байр
   | "circle" // дугуй — байр, байгууламж, артиллери/зенит/явган цэргийн салаа
@@ -22,6 +22,8 @@ export type FrameShape =
   | "diamond" // танк төрлийн техник
   | "ellipse" // холимог мотобуудлагын салбар
   | "arrow" // ажиллагаа/хөдөлгөөний тэмдэг
+  | "flag" // туг — удирдлага, командын байр (§2.1): хүрээ + доош чиглэсэн иш
+  | "yatsbm" // ЯЦБМ-ийн хүрээ — салаа, тасаг, бүлэг (§1.3.3, §2.3), үсэг дотор нь
   | "point"; // хүрээгүй бэлгэдэл (зэвсэг, дан branch-глиф)
 
 export type AffiliationColor =
@@ -92,7 +94,7 @@ export interface PlacedSymbol {
   symbolId: string;
   lat: number;
   lng: number;
-  /** Optional unit/harьяаллын dугаар the trainee can label the marker with. */
+  /** Optional unit/харьяаллын дугаар the trainee can label the marker with. */
   designation?: string;
   /** Overrides the symbol definition's default color for this placement,
    * so e.g. the same unit icon can be dropped as either friendly or hostile. */

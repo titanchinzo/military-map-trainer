@@ -1,14 +1,16 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { useUser } from "@clerk/nextjs";
 import SymbolPalette from "@/components/SymbolPalette";
 import GlossaryModal from "@/components/GlossaryModal";
 import LineDrawPanel, { type LineDrawChoice } from "@/components/LineDrawPanel";
-import { loadPlacements, savePlacements, loadLines, saveLines } from "@/lib/storage";
 import { getSymbol } from "@/lib/symbols";
 import { getLineType } from "@/lib/lineTypes";
+import { useSupabase } from "@/lib/supabase/client";
+import { useOwnBoard } from "@/hooks/useOwnBoard";
+import type { BoardState } from "@/lib/boards";
 import type { AffiliationColor, PlacedSymbol, SymbolDef } from "@/types/symbol";
 import type { PlacedLine } from "@/types/line";
 
@@ -25,43 +27,45 @@ function uid() {
   return `p_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 8)}`;
 }
 
-export default function MapShell() {
+/**
+ * Газрын зургийн ажлын талбар. Гурван горимд ажиллана:
+ *  1. өөрийн зураг — засварлаж, Supabase руу шууд бичнэ;
+ *  2. багшийн хичээлийн дэлгэц — `remoteBoard` + `readOnly`, харагдац нь дагана;
+ *  3. сурагчийн ажлыг хянах — `remoteBoard` + `readOnly`.
+ */
+export default function MapShell({
+  readOnly = false,
+  remoteBoard = null,
+  followView = false,
+  banner = null,
+}: {
+  readOnly?: boolean;
+  /** Өгвөл эндээс зурна (өөрийн зургийг ачаалахгүй). */
+  remoteBoard?: BoardState | null;
+  /** Алсын зургийн төв/zoom-ыг дагах эсэх. */
+  followView?: boolean;
+  banner?: ReactNode;
+} = {}) {
   const { user, isLoaded } = useUser();
   // null until Clerk resolves who's signed in, so we don't briefly load (and
   // then overwrite) "guest" data before swapping to the real user's layout.
-  const userId = isLoaded ? (user?.id ?? "guest") : null;
+  const userId = isLoaded ? (user?.id ?? null) : null;
 
-  const [placements, setPlacements] = useState<PlacedSymbol[]>([]);
-  const [lines, setLines] = useState<PlacedLine[]>([]);
+  const supabase = useSupabase();
+  // Зөвхөн харах горимд өөрийн зургийг огт ачаалахгүй.
+  const own = useOwnBoard(supabase, readOnly ? null : userId);
+  const placements = remoteBoard ? remoteBoard.placements : own.placements;
+  const lines = remoteBoard ? remoteBoard.lines : own.lines;
+  const { setPlacements, setLines } = own;
+
   const [pendingSymbolId, setPendingSymbolId] = useState<string | null>(null);
   const [drawChoice, setDrawChoice] = useState<LineDrawChoice | null>(null);
   const [lineDrawPanelOpen, setLineDrawPanelOpen] = useState(false);
-  // Incremented to signal MapCanvas to finish the in-progress draft (its
-  // draftPoints array lives inside MapCanvas, not here).
-  const [finishRequestId, setFinishRequestId] = useState(0);
+  // Vertices of the shape being drawn. Kept here rather than inside MapCanvas
+  // so the "Дуусгах" button can show progress and explain a refusal.
+  const [draftPoints, setDraftPoints] = useState<[number, number][]>([]);
+  const [drawWarning, setDrawWarning] = useState<string | null>(null);
   const [glossaryOpen, setGlossaryOpen] = useState(false);
-  // Tracks which user's saved layout is currently loaded into `placements`.
-  const [loadedForUserId, setLoadedForUserId] = useState<string | null>(null);
-
-  // "Adjusting state during render" (see react.dev/learn/you-might-not-need-an-effect)
-  // instead of setState-in-an-effect: once Clerk resolves `userId`, and it
-  // differs from what we last loaded, resync `placements`/`lines` from storage.
-  if (userId !== null && userId !== loadedForUserId) {
-    setLoadedForUserId(userId);
-    setPlacements(loadPlacements(userId));
-    setLines(loadLines(userId));
-  }
-
-  // Persist on every change, once we've actually loaded a user's layout.
-  useEffect(() => {
-    if (loadedForUserId === null) return;
-    savePlacements(loadedForUserId, placements);
-  }, [placements, loadedForUserId]);
-
-  useEffect(() => {
-    if (loadedForUserId === null) return;
-    saveLines(loadedForUserId, lines);
-  }, [lines, loadedForUserId]);
 
   // Esc cancels "click to place" mode.
   useEffect(() => {
@@ -72,13 +76,22 @@ export default function MapShell() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
+  // Highest request number issued per placement. A response is applied only if
+  // it is still the latest one for that marker, so dragging a marker several
+  // times in a row can't leave the elevation of an intermediate position.
+  const elevationSeq = useRef<Record<string, number>>({});
+
   const fetchElevation = useCallback(
     async (placementUid: string, lat: number, lng: number) => {
+      const seq = (elevationSeq.current[placementUid] ?? 0) + 1;
+      elevationSeq.current[placementUid] = seq;
+      const isStale = () => elevationSeq.current[placementUid] !== seq;
       try {
         const res = await fetch(
           `/api/elevation?lat=${lat}&lon=${lng}`,
         );
         const data = await res.json();
+        if (isStale()) return;
         setPlacements((prev) =>
           prev.map((p) =>
             p.uid === placementUid
@@ -91,6 +104,7 @@ export default function MapShell() {
           ),
         );
       } catch {
+        if (isStale()) return;
         setPlacements((prev) =>
           prev.map((p) =>
             p.uid === placementUid
@@ -100,7 +114,7 @@ export default function MapShell() {
         );
       }
     },
-    [],
+    [setPlacements],
   );
 
   const handleDropSymbol = useCallback(
@@ -119,7 +133,7 @@ export default function MapShell() {
       setPendingSymbolId(null);
       void fetchElevation(newUid, lat, lng);
     },
-    [fetchElevation],
+    [fetchElevation, setPlacements],
   );
 
   const handleMoveSymbol = useCallback(
@@ -133,12 +147,16 @@ export default function MapShell() {
       );
       void fetchElevation(moveUid, lat, lng);
     },
-    [fetchElevation],
+    [fetchElevation, setPlacements],
   );
 
-  const handleDeleteSymbol = useCallback((deleteUid: string) => {
-    setPlacements((prev) => prev.filter((p) => p.uid !== deleteUid));
-  }, []);
+  const handleDeleteSymbol = useCallback(
+    (deleteUid: string) => {
+      setPlacements((prev) => prev.filter((p) => p.uid !== deleteUid));
+      delete elevationSeq.current[deleteUid];
+    },
+    [setPlacements],
+  );
 
   const handleUpdateDesignation = useCallback(
     (updateUid: string, designation: string) => {
@@ -146,7 +164,7 @@ export default function MapShell() {
         prev.map((p) => (p.uid === updateUid ? { ...p, designation } : p)),
       );
     },
-    [],
+    [setPlacements],
   );
 
   const handleUpdateAffiliation = useCallback(
@@ -155,7 +173,7 @@ export default function MapShell() {
         prev.map((p) => (p.uid === updateUid ? { ...p, affiliation } : p)),
       );
     },
-    [],
+    [setPlacements],
   );
 
   const handleUpdateBranch = useCallback(
@@ -164,11 +182,13 @@ export default function MapShell() {
         prev.map((p) => (p.uid === updateUid ? { ...p, branchGlyphId } : p)),
       );
     },
-    [],
+    [setPlacements],
   );
 
   const handlePick = useCallback((def: SymbolDef) => {
     setDrawChoice(null);
+    setDraftPoints([]);
+    setDrawWarning(null);
     setPendingSymbolId((current) => (current === def.id ? null : def.id));
   }, []);
 
@@ -177,37 +197,65 @@ export default function MapShell() {
     if (!window.confirm("Байрлуулсан бүх тэмдгийг устгах уу?")) return;
     setPlacements([]);
     setLines([]);
-  }, [placements.length, lines.length]);
+    elevationSeq.current = {};
+  }, [placements.length, lines.length, setPlacements, setLines]);
+
+  const minDraftPoints = drawChoice
+    ? getLineType(drawChoice.typeId)?.kind === "area"
+      ? 3
+      : 2
+    : 0;
 
   const handleStartDraw = useCallback((choice: LineDrawChoice) => {
     setPendingSymbolId(null);
     setDrawChoice(choice);
+    setDraftPoints([]);
+    setDrawWarning(null);
     setLineDrawPanelOpen(false);
   }, []);
 
   const handleCancelDraw = useCallback(() => {
     setDrawChoice(null);
+    setDraftPoints([]);
+    setDrawWarning(null);
   }, []);
 
-  const handleFinishLine = useCallback(
-    (points: [number, number][]) => {
-      if (!drawChoice || !getLineType(drawChoice.typeId)) return;
-      const newLine: PlacedLine = {
-        uid: uid(),
-        typeId: drawChoice.typeId,
-        points,
-        echelon: drawChoice.echelon,
-        createdAt: Date.now(),
-      };
-      setLines((prev) => [...prev, newLine]);
-      setDrawChoice(null);
+  const handleAddDraftPoint = useCallback((lat: number, lng: number) => {
+    setDraftPoints((prev) => [...prev, [lat, lng]]);
+    setDrawWarning(null);
+  }, []);
+
+  const handleFinishDraw = useCallback(() => {
+    if (!drawChoice) return;
+    const type = getLineType(drawChoice.typeId);
+    if (!type) return;
+    if (draftPoints.length < minDraftPoints) {
+      setDrawWarning(
+        type.kind === "area"
+          ? `Муж хаахад дор хаяж ${minDraftPoints} цэг хэрэгтэй — одоо ${draftPoints.length}.`
+          : `Шугам зурахад дор хаяж ${minDraftPoints} цэг хэрэгтэй — одоо ${draftPoints.length}.`,
+      );
+      return;
+    }
+    const newLine: PlacedLine = {
+      uid: uid(),
+      typeId: drawChoice.typeId,
+      points: draftPoints,
+      echelon: drawChoice.echelon,
+      createdAt: Date.now(),
+    };
+    setLines((prev) => [...prev, newLine]);
+    setDrawChoice(null);
+    setDraftPoints([]);
+    setDrawWarning(null);
+  }, [drawChoice, draftPoints, minDraftPoints, setLines]);
+
+  const handleDeleteLine = useCallback(
+    (deleteUid: string) => {
+      setLines((prev) => prev.filter((l) => l.uid !== deleteUid));
     },
-    [drawChoice],
+    [setLines],
   );
-
-  const handleDeleteLine = useCallback((deleteUid: string) => {
-    setLines((prev) => prev.filter((l) => l.uid !== deleteUid));
-  }, []);
 
   const handleUpdateLineAffiliation = useCallback(
     (updateUid: string, affiliation: AffiliationColor) => {
@@ -215,32 +263,37 @@ export default function MapShell() {
         prev.map((l) => (l.uid === updateUid ? { ...l, affiliation } : l)),
       );
     },
-    [],
+    [setLines],
   );
 
   return (
     <div className="flex min-h-0 flex-1">
-      <SymbolPalette onPick={handlePick} />
+      {!readOnly && <SymbolPalette onPick={handlePick} />}
       <div className="relative min-h-0 flex-1">
         <MapCanvas
           placements={placements}
           lines={lines}
           pendingSymbolId={pendingSymbolId}
           drawChoice={drawChoice}
-          finishRequestId={finishRequestId}
+          draftPoints={draftPoints}
+          readOnly={readOnly}
+          remoteView={followView ? (remoteBoard?.view ?? null) : null}
+          onViewChange={readOnly ? undefined : own.setView}
           onDropSymbol={handleDropSymbol}
           onMoveSymbol={handleMoveSymbol}
           onDeleteSymbol={handleDeleteSymbol}
           onUpdateDesignation={handleUpdateDesignation}
           onUpdateAffiliation={handleUpdateAffiliation}
           onUpdateBranch={handleUpdateBranch}
-          onFinishLine={handleFinishLine}
+          onAddDraftPoint={handleAddDraftPoint}
+          onFinishDraw={handleFinishDraw}
           onCancelDraw={handleCancelDraw}
           onDeleteLine={handleDeleteLine}
           onUpdateLineAffiliation={handleUpdateLineAffiliation}
         />
 
         <div className="pointer-events-none absolute left-3 top-3 z-[1000] flex flex-col items-start gap-2">
+          {banner}
           {pendingSymbolId && (
             <div className="pointer-events-auto flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
               <span>
@@ -257,25 +310,38 @@ export default function MapShell() {
             </div>
           )}
           {drawChoice && (
-            <div className="pointer-events-auto flex items-center gap-2 rounded-md bg-sky-600 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
-              <span>
-                Зурж байна: «{drawChoice.label}» — газрын зураг дээр цэг
-                бүрд дарна уу
-              </span>
-              <button
-                type="button"
-                onClick={() => setFinishRequestId((n) => n + 1)}
-                className="rounded bg-sky-700 px-1.5 py-0.5 hover:bg-sky-800"
-              >
-                Дуусгах
-              </button>
-              <button
-                type="button"
-                onClick={handleCancelDraw}
-                className="rounded bg-sky-800 px-1.5 py-0.5 hover:bg-sky-900"
-              >
-                Esc
-              </button>
+            <div className="pointer-events-auto flex max-w-md flex-col gap-1 rounded-md bg-sky-600 px-3 py-1.5 text-xs font-medium text-white shadow-lg">
+              <div className="flex items-center gap-2">
+                <span>
+                  Зурж байна: «{drawChoice.label}» — газрын зураг дээр цэг
+                  бүрд дарна уу (цэг: {draftPoints.length}/{minDraftPoints})
+                </span>
+                <button
+                  type="button"
+                  onClick={handleFinishDraw}
+                  disabled={draftPoints.length < minDraftPoints}
+                  title={
+                    draftPoints.length < minDraftPoints
+                      ? `Дор хаяж ${minDraftPoints} цэг тавина уу`
+                      : undefined
+                  }
+                  className="rounded bg-sky-700 px-1.5 py-0.5 hover:bg-sky-800 disabled:cursor-not-allowed disabled:bg-sky-700/40 disabled:text-sky-200"
+                >
+                  Дуусгах
+                </button>
+                <button
+                  type="button"
+                  onClick={handleCancelDraw}
+                  className="rounded bg-sky-800 px-1.5 py-0.5 hover:bg-sky-900"
+                >
+                  Esc
+                </button>
+              </div>
+              {drawWarning && (
+                <span className="font-normal text-amber-100">
+                  ⚠ {drawWarning}
+                </span>
+              )}
             </div>
           )}
         </div>
@@ -284,13 +350,15 @@ export default function MapShell() {
           <div className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs text-zinc-300 shadow-lg backdrop-blur">
             Байрлуулсан: {placements.length} · Шугам/муж: {lines.length}
           </div>
-          <button
-            type="button"
-            onClick={() => setLineDrawPanelOpen(true)}
-            className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-zinc-200 shadow-lg backdrop-blur hover:bg-zinc-800"
-          >
-            Шугам, муж зурах
-          </button>
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={() => setLineDrawPanelOpen(true)}
+              className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-zinc-200 shadow-lg backdrop-blur hover:bg-zinc-800"
+            >
+              Шугам, муж зурах
+            </button>
+          )}
           <button
             type="button"
             onClick={() => setGlossaryOpen(true)}
@@ -298,13 +366,15 @@ export default function MapShell() {
           >
             Нэр томьёоны тайлбар
           </button>
-          <button
-            type="button"
-            onClick={handleClearAll}
-            className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-red-400 shadow-lg backdrop-blur hover:bg-zinc-800"
-          >
-            Бүгдийг устгах
-          </button>
+          {!readOnly && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              className="pointer-events-auto rounded-md bg-zinc-900/90 px-3 py-1.5 text-xs font-medium text-red-400 shadow-lg backdrop-blur hover:bg-zinc-800"
+            >
+              Бүгдийг устгах
+            </button>
+          )}
         </div>
       </div>
 

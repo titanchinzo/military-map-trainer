@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { SYMBOLS } from "@/lib/symbols";
+import { LINE_TYPES } from "@/lib/lineTypes";
 import { Show, SignInButton } from "@clerk/nextjs";
 
 export default function Home() {
@@ -32,11 +34,11 @@ export default function Home() {
       <dl className="grid max-w-3xl grid-cols-1 gap-4 text-left sm:grid-cols-3">
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <dt className="text-sm font-semibold text-zinc-200">
-            160+ таних тэмдэг
+            {SYMBOLS.length} таних тэмдэг
           </dt>
           <dd className="mt-1 text-sm text-zinc-500">
             Удирдлага, анги/салбар, зэвсэглэл, техник, ажиллагааны тэмдгүүд
-            ангилалаар эрэмбэлэгдсэн.
+            ангилалаар эрэмбэлэгдсэн, нэмэлт {LINE_TYPES.length} шугам, муж.
           </dd>
         </div>
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
