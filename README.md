@@ -133,7 +133,7 @@ Supabase тохируулаагүй бол апп **хуучин `localStorage` 
 - **`src/proxy.ts`** — Next.js 16 renamed `middleware.ts` → `proxy.ts`. Wraps
   Clerk's `clerkMiddleware`; every route except `/`, `/sign-in`, `/sign-up`
   requires a session.
-- **`src/lib/symbols.ts`** — 614 `SymbolDef` entries transcribed from all 82
+- **`src/lib/symbols.ts`** — 776 `SymbolDef` entries transcribed from all 82
   pages of *"Цэргийн тактикийн таних тэмдэг, тэмдэглэгээг хэрэглэх заавар
   Т4‑2022"*. `CATEGORIES` follows the manual's own table of contents in order
   — §2.1–§2.10, then appendices 1–13 with their sub-items — so a palette
@@ -145,7 +145,7 @@ Supabase тохируулаагүй бол апп **хуучин `localStorage` 
   Орон нутгийн цэрэг (contents item 12) has a single entry because the manual
   ships no appendix table for it — page 71 goes straight from Барилга to
   Хэмжил зүй.
-- **`src/lib/lineTypes.ts`** — 58 `LineTypeDef` entries for §2.8 boundary
+- **`src/lib/lineTypes.ts`** — 82 `LineTypeDef` entries for §2.8 boundary
   lines, §2.9 areas / mission lines / recon and deployment lines, and the
   Хавсралт 17 border-troop boundaries. These are drawn on the map rather than
   dropped as markers.
@@ -230,6 +230,33 @@ marker; Delete/Backspace removes the selected one.
   terminator glyph.
 
 ## Coverage audit against the printed manual (Sep 2026)
+
+**The whole manual has now been reconciled** — chapter 2 first, then appendices
+1–19 (the printed body numbers 19 appendices even though the contents page
+lists 13 groups). The catalog went 560 → 776 symbols and 58 → 82 line/area
+types.
+
+The PDF *does* have a usable Cyrillic text layer, contrary to an earlier note
+here: `pdftotext -layout` extracts the "Агуулга" column cleanly. That made it
+possible to diff the manual's contents against the catalog by name instead of
+reading 82 page images, though the images were still needed to draw each
+glyph. Two traps when doing this again:
+
+- Descriptions wrap over several lines, so a naive line-per-symbol reading
+  triple-counts the long ones. Join a line onto the previous when it starts
+  lowercase or the previous has an unclosed `(`.
+- The appendices re-list symbols that chapter 2 already defines (vehicles in
+  Хавсралт 12, aerodromes in Хавсралт 2). Match against the *whole* catalog,
+  not the one category, or they look missing.
+
+What the appendices added: Хавсралт 5 communications stations (+16), 11–14
+supply and medical (+46), 16 metrology labs (+2), 18 emergency-service and
+weather (+28), 19 police and internal troops (+28), 6 cyber/network (+33),
+2 radar altitude bands (+9), plus stragglers. Х1, Х4 and Х15 were already
+complete. Appendix lines and areas (районууд, заагууд) went to `lineTypes.ts`
+where they belong, not `symbols.ts`.
+
+## Earlier coverage note (chapter 2)
 
 Chapter 2 was reconciled page by page: §2.1–§2.4 and §2.8–§2.9 were already
 complete; §2.5 (+7: тогтоон барих, маневр, байлдаанаас гарах, цэвэрлэгээ,
