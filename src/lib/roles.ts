@@ -59,14 +59,16 @@ export async function ensureProfile(): Promise<{ userId: string; role: Role } | 
   const email = user.primaryEmailAddress?.emailAddress ?? null;
   let role = asRole(user.publicMetadata?.role);
 
-  // Анхны админ: BOOTSTRAP_ADMIN_EMAILS-д байгаа хүн эрхгүй нэвтэрвэл админ болно.
-  if (!role && email) {
-    const bootstrap = (process.env.BOOTSTRAP_ADMIN_EMAILS ?? "")
-      .split(",")
-      .map((e) => e.trim().toLowerCase())
-      .filter(Boolean);
-    if (bootstrap.includes(email.toLowerCase())) role = "admin";
-  }
+  // BOOTSTRAP_ADMIN_EMAILS нь тохиргооны түвшний олголт тул одоо байгаа эрхээс
+  // ДЭЭГҮҮР үйлчилнэ. Өмнө нь зөвхөн эрхгүй хэрэглэгчид шалгадаг байсан нь
+  // алдаатай байв: тухайн хүн энэ хувьсагч тавигдахаас өмнө нэг удаа нэвтэрсэн
+  // бол "student" гэж бичигдээд, түүнээс хойш хэзээ ч админ болох боломжгүй
+  // болдог байлаа.
+  const bootstrap = (process.env.BOOTSTRAP_ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  if (email && bootstrap.includes(email.toLowerCase())) role = "admin";
   role ??= "student";
 
   if (asRole(user.publicMetadata?.role) !== role) {
