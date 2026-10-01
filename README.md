@@ -32,6 +32,35 @@ balance was 0 at setup time, so elevation lookups will fail until you buy
 requests at https://tessadem.com/dashboard; the UI degrades gracefully
 (shows "тодорхойгүй" instead of crashing) when that happens.
 
+## Desktop (Windows) хувилбар
+
+`desktop/` нь Vercel дээрх апп-ыг өөрийн цонхонд ачаалдаг Electron бүрхүүл.
+Сервер болон Clerk/Supabase/TessaDEM-ийн нууц түлхүүрүүд Vercel дээрээ үлдэнэ —
+exe дотор нууц юм алга, `main` руу push хийх бүрд desktop хувилбар ч шинэ кодыг
+шууд авна (exe-г дахин build хийх шаардлагагүй). Интернэт шаардлагатай; холболт
+алга бол "Интернэт холболт алга" хуудас гарч, холболт сэргэмэгц өөрөө дахин
+оролдоно.
+
+```powershell
+cd desktop
+npm install
+npm start        # хөгжүүлэлтийн горимоор нээх
+npm run dist     # desktop/dist/ дотор installer (Setup) болон portable exe
+```
+
+- `$env:MMT_APP_URL="http://localhost:3000"; npm start` — Vercel-ийн оронд
+  локал `npm run dev`-ийг ачаална.
+- Нэвтрэлт (Clerk, Google OAuth) цонх дотроо явна; бусад гадаад холбоос
+  системийн браузерт нээгдэнэ. Clerk-ийг production instance руу шилжүүлж өөр
+  домэйн (`clerk.<домэйн>`) ашиглавал `desktop/main.mjs`-ийн
+  `IN_APP_HOST_SUFFIXES`-д нэмнэ.
+- Google нь Electron-ийг "аюулгүй биш браузер" гэж OAuth-ыг хаадаг тул
+  User-Agent-аас `Electron` токеныг хасдаг.
+- exe-д code signing хийгээгүй тул анх ажиллуулахад Windows SmartScreen
+  анхааруулга гарна → "More info" → "Run anyway".
+- VS Code-ийн терминалаас `npm start` ажиллуулахад `ELECTRON_RUN_AS_NODE=1`
+  уламжлагдаж апп нээгдэхгүй байж болно — `Remove-Item Env:ELECTRON_RUN_AS_NODE`.
+
 ## Багш / сурагч / админ (Supabase)
 
 Апп нь гурван эрхтэй: **админ** хэн нь багш, хэн нь сурагч болохыг шийднэ;

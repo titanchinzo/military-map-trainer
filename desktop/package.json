@@ -1,0 +1,54 @@
+{
+  "name": "military-map-trainer-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Тактикийн тэмдгийн сургалт — Windows desktop хувилбар",
+  "author": "chinzo",
+  "main": "main.mjs",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win"
+  },
+  "build": {
+    "appId": "com.titanchinzo.militarymaptrainer",
+    "productName": "Military Map Trainer",
+    "files": [
+      "main.mjs",
+      "offline.html"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "icon": "../src/app/favicon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "shortcutName": "Тактикийн тэмдгийн сургалт",
+      "uninstallDisplayName": "Тактикийн тэмдгийн сургалт",
+      "artifactName": "MilitaryMapTrainer-Setup-${version}.${ext}"
+    },
+    "portable": {
+      "artifactName": "MilitaryMapTrainer-Portable-${version}.${ext}"
+    }
+  },
+  "devDependencies": {
+    "electron": "^44.5.1",
+    "electron-builder": "^26.15.3"
+  }
+}
