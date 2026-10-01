@@ -7,7 +7,8 @@
   "main": "main.mjs",
   "scripts": {
     "start": "electron .",
-    "dist": "electron-builder --win"
+    "dist": "electron-builder --win",
+    "release": "node scripts/release.mjs"
   },
   "build": {
     "appId": "com.titanchinzo.militarymaptrainer",
