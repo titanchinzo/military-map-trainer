@@ -2,6 +2,7 @@ import Link from "next/link";
 import { SYMBOLS } from "@/lib/symbols";
 import { LINE_TYPES } from "@/lib/lineTypes";
 import { Show, SignInButton } from "@clerk/nextjs";
+import DesktopDownload from "@/components/DesktopDownload";
 
 export default function Home() {
   return (
@@ -16,21 +17,24 @@ export default function Home() {
           дээр 2–3 секунд хулгана байрлуулбал түүний тодорхойлолт гарч ирнэ.
         </p>
       </div>
-      <Show when="signed-in">
-        <Link
-          href="/map"
-          className="rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-500"
-        >
-          Газрын зураг руу орох
-        </Link>
-      </Show>
-      <Show when="signed-out">
-        <SignInButton mode="modal">
-          <button className="rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-500">
-            Нэвтрэж эхлэх
-          </button>
-        </SignInButton>
-      </Show>
+      <div className="flex flex-wrap items-center justify-center gap-3">
+        <Show when="signed-in">
+          <Link
+            href="/map"
+            className="rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-500"
+          >
+            Газрын зураг руу орох
+          </Link>
+        </Show>
+        <Show when="signed-out">
+          <SignInButton mode="modal">
+            <button className="rounded-lg bg-blue-600 px-6 py-3 text-base font-semibold text-white transition hover:bg-blue-500">
+              Нэвтрэж эхлэх
+            </button>
+          </SignInButton>
+        </Show>
+        <DesktopDownload />
+      </div>
       <dl className="grid max-w-3xl grid-cols-1 gap-4 text-left sm:grid-cols-3">
         <div className="rounded-lg border border-zinc-800 bg-zinc-900 p-4">
           <dt className="text-sm font-semibold text-zinc-200">

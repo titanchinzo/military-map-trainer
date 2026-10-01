@@ -14,6 +14,7 @@
     "productName": "Military Map Trainer",
     "files": [
       "main.mjs",
+      "preload.cjs",
       "offline.html"
     ],
     "directories": {
@@ -41,10 +42,10 @@
       "allowToChangeInstallationDirectory": true,
       "shortcutName": "Тактикийн тэмдгийн сургалт",
       "uninstallDisplayName": "Тактикийн тэмдгийн сургалт",
-      "artifactName": "MilitaryMapTrainer-Setup-${version}.${ext}"
+      "artifactName": "MilitaryMapTrainer-Setup.${ext}"
     },
     "portable": {
-      "artifactName": "MilitaryMapTrainer-Portable-${version}.${ext}"
+      "artifactName": "MilitaryMapTrainer-Portable.${ext}"
     }
   },
   "devDependencies": {

@@ -129,6 +129,8 @@ function createWindow() {
       contextIsolation: true,
       nodeIntegration: false,
       sandbox: true,
+      preload: path.join(import.meta.dirname, "preload.cjs"),
+      additionalArguments: [`--mmt-app-origin=${APP_ORIGIN}`],
     },
   });
   win.maximize();

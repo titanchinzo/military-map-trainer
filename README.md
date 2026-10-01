@@ -48,6 +48,12 @@ npm start        # хөгжүүлэлтийн горимоор нээх
 npm run dist     # desktop/dist/ дотор installer (Setup) болон portable exe
 ```
 
+- Хэрэглэгчид нүүр хуудасны **"Windows програм татах"** товчоор GitHub
+  Releases-ийн хамгийн сүүлийн `MilitaryMapTrainer-Setup.exe`-г татна
+  (desktop апп дотроос нээхэд `desktop/preload.cjs`-ийн `window.mmtDesktop`-оор
+  товч нуугдана). Шинэ exe гаргахдаа `npm run dist` хийгээд GitHub дээр шинэ
+  release үүсгэж `dist/`-ийн хоёр exe-г хавсаргана — файлын нэр тогтмол тул
+  сайтын холбоосыг солих хэрэггүй.
 - `$env:MMT_APP_URL="http://localhost:3000"; npm start` — Vercel-ийн оронд
   локал `npm run dev`-ийг ачаална.
 - Нэвтрэлт (Clerk, Google OAuth) цонх дотроо явна; бусад гадаад холбоос
